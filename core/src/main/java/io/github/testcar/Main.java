@@ -52,6 +52,7 @@ public class Main implements ApplicationListener {
     private Preferences preferences;
     private static final String HIGH_SCORE_KEY = "high_score";
     private static int highScore=0;
+    int flag=0;
 
     @Override
     public void create() {
@@ -269,19 +270,16 @@ public class Main implements ApplicationListener {
             dropRectangle.set(dropSprite.getX(), dropSprite.getY(), dropWidth, dropHeight);
 
             // Remove the drop if it's off the screen
-            if (dropSprite.getY() < -dropHeight) {
-                dropSprites.removeIndex(i);  // Safely remove the drop
-                score++;
-                Score= "" +score;
-            }
+
             // Check for collision between the drop and the PlayerCar
             if (PlayerCarRectangle.overlaps(dropRectangle)) {
                 dropSprites.removeIndex(i);  // Remove the drop upon collision
                 dropSound.play();            // Play the sound
                 checkAndUpdateHighScore(score);
                 score=0;                   // Reset the score (or perform other logic)
-
-                float delay = 0.4f; // Delay in seconds before ending the game
+                Score= "" +score;
+                flag=1;
+                float delay = 0.9f; // Delay in seconds before ending the game
 
                 Timer.schedule(new Timer.Task() {
                     @Override
@@ -289,8 +287,16 @@ public class Main implements ApplicationListener {
                         // End game logic after the delay
                         gameState = GameState.GAMEOVER;
                         drawGameOverMenu();
+                        flag=0;
                     }
                 }, delay);  // Schedule the task to run after 'delay' seconds
+                score=0;                   // Reset the score (or perform other logic)
+                Score= "" +score;
+            }
+            if (flag!=1 && dropSprite.getY() < -dropHeight && gameState != GameState.GAMEOVER && !PlayerCarRectangle.overlaps(dropRectangle)) {
+                dropSprites.removeIndex(i);  // Safely remove the drop
+                score++;
+                Score= "" +score;
             }
 
         }
@@ -392,7 +398,7 @@ public class Main implements ApplicationListener {
         Label addressLabel2 = new Label("PRESS E TO EXIT", skin);
         addressLabel2.setFontScale(8.0f);
         Label highScoreLabel = new Label("High Score: " + getHighScore(), skin);
-        highScoreLabel.setFontScale(2.0f); // Scale the font for visibility
+        highScoreLabel.setFontScale(8.0f); // Scale the font for visibility
 
         // Add elements to the table
         Table table = new Table();
