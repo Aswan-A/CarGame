@@ -1,4 +1,4 @@
-package io.github.testcar;
+package io.github.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -59,8 +59,8 @@ public class Main implements ApplicationListener {
         backgroundTexture = new Texture("background.png");
         PlayerCarTexture = new Texture("PlayerCar.png");
         dropTexture = new Texture("drop.png");
-        dropSound = Gdx.audio.newSound(Gdx.files.internal("crash-7075.mp3"));
-        music = Gdx.audio.newMusic(Gdx.files.internal("acc.mp3"));
+        dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(15, 10);
         backgroundSprite=new Sprite(backgroundTexture);
@@ -276,8 +276,7 @@ public class Main implements ApplicationListener {
                 dropSprites.removeIndex(i);  // Remove the drop upon collision
                 dropSound.play();            // Play the sound
                 checkAndUpdateHighScore(score);
-                score=0;                   // Reset the score (or perform other logic)
-                Score= "" +score;
+
                 flag=1;
                 float delay = 0.9f; // Delay in seconds before ending the game
 
@@ -288,10 +287,11 @@ public class Main implements ApplicationListener {
                         gameState = GameState.GAMEOVER;
                         drawGameOverMenu();
                         flag=0;
+                        score=0;                   // Reset the score (or perform other logic)
+                        Score= "" +score;
                     }
                 }, delay);  // Schedule the task to run after 'delay' seconds
-                score=0;                   // Reset the score (or perform other logic)
-                Score= "" +score;
+
             }
             if (flag!=1 && dropSprite.getY() < -dropHeight && gameState != GameState.GAMEOVER && !PlayerCarRectangle.overlaps(dropRectangle)) {
                 dropSprites.removeIndex(i);  // Safely remove the drop
