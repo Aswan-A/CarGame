@@ -20,6 +20,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.Preferences;
+
 
 public class Main implements ApplicationListener {
     Texture backgroundTexture;
@@ -29,25 +31,31 @@ public class Main implements ApplicationListener {
     Sound dropSound;
     Music music;
     SpriteBatch spriteBatch;
-    FitViewport viewport;
-    Sprite PlayerCarSprite;
+    static FitViewport viewport;
+    static Sprite PlayerCarSprite;
     Sprite backgroundSprite;
     Sprite backgroundSprite2;
     Vector2 touchPos;
-    Array<Sprite> dropSprites;
+    static Array<Sprite> dropSprites;
     float dropTimer;
     Rectangle PlayerCarRectangle;
     Rectangle dropRectangle;
-    private int[] score;
+    private static int score;
     private String Score;
     BitmapFont yourfont;
-    boolean[] gameOver = {false};
+    static boolean[] gameOver = {false};
     private static Skin skin;
+    enum GameState {
+        RUNNING, PAUSED, GAMEOVER,MAINMENU
+    }
+    private static GameState gameState = GameState.MAINMENU;
+    private Preferences preferences;
+    private static final String HIGH_SCORE_KEY = "high_score";
+    private static int highScore=0;
 
     @Override
     public void create() {
         backgroundTexture = new Texture("background.png");
-        Texture GameoverTexture = new Texture("Picture1.png");
         PlayerCarTexture = new Texture("PlayerCar.png");
         dropTexture = new Texture("drop.png");
         dropSound = Gdx.audio.newSound(Gdx.files.internal("crash-7075.mp3"));
@@ -68,10 +76,12 @@ public class Main implements ApplicationListener {
         music.setLooping(true);
         music.setVolume(2f);
         music.play();
-        score = new int[]{0};
+        score = 0;
         Score=" 0";
         yourfont=new BitmapFont();
         yourfont.getData().setScale(0.1f, 0.1f);
+        preferences = Gdx.app.getPreferences("MyGamePreferences");
+        highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
 
     }
 
@@ -82,14 +92,122 @@ public class Main implements ApplicationListener {
 
     @Override
     public void render() {
-        if (gameOver[0]) {
-            ScreenUtils.clear(Color.WHITE);
-            restartMenu(score, dropSprites, gameOver, PlayerCarSprite, viewport);  // Call the restart menu
+        ScreenUtils.clear(Color.BLACK);
+        checkForPauseInput();
+        switch (gameState) {
+            case MAINMENU:
+                if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+                    gameState = GameState.RUNNING;
+                }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                    Gdx.app.exit();  // Exit the game
+                }
+                mainmenu();
+                break;
+            case RUNNING:
+                input();  // Handle player input
+                logic();  // Game logic
+                draw();   // Render the game
+                break;
 
-        } else {
-            input();
-            logic();
-            draw();
+            case PAUSED:
+                drawPauseMenu();  // Display the pause menu
+                handlePauseInput(); // Handle pause menu input
+                break;
+
+            case GAMEOVER:
+                drawGameOverMenu();  // Display the game over screen
+                break;
+        }
+    }
+
+    private void mainmenu() {
+        ScreenUtils.clear(Color.WHITE);
+
+        Skin skin = new Skin(Gdx.files.internal("ma/clean-crispy-ui.json"));
+        Stage stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        // Create the UI layout
+        Table root = new Table();
+        root.setFillParent(true);
+        stage.addActor(root);
+
+        // Create labels and text fields for input
+        Label nameLabel = new Label("P FOR PLAY ", skin);
+        nameLabel.setFontScale(8.0f);
+        root.add(nameLabel).padBottom(20);  // Add some padding
+        root.row();  // Move to the next row in the table
+        Label nameLabel2 = new Label("PRESS E TO EXIT", skin);
+        nameLabel2.setFontScale(8.0f);
+        root.add(nameLabel2).padBottom(20);
+        root.row();
+        // Render the stage
+        stage.act();  // Update the stage
+        stage.draw();
+    }
+    public void checkAndUpdateHighScore(int score) {
+        if (score > highScore) {
+            highScore = score; // Update high score
+            preferences.putInteger(HIGH_SCORE_KEY, highScore); // Save the new high score
+            preferences.flush(); // Write the changes to storage
+        }
+    }
+    public static int getHighScore() {
+        return highScore;
+    }
+
+
+
+    private void handlePauseInput() {
+        // If the player presses ESC again, resume the game
+        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            gameState = GameState.RUNNING;
+        }
+
+        // If the player presses Q, quit the game
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            Gdx.app.exit();  // Exit the game
+        }
+
+        // Add more options here if needed (like restarting from the pause menu)
+    }
+
+
+    private void drawPauseMenu() {
+        // Clear the screen with a semi-transparent black background to indicate the pause
+        ScreenUtils.clear(Color.WHITE);
+
+        Skin skin = new Skin(Gdx.files.internal("ma/clean-crispy-ui.json"));
+        Stage stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        // Create the UI layout
+        Table root = new Table();
+        root.setFillParent(true);
+        stage.addActor(root);
+
+        // Create labels and text fields for input
+        Label nameLabel = new Label("PAUSED", skin);
+        nameLabel.setFontScale(8.0f);
+        Label addressLabel = new Label("PRESS T TO UNPAUSE", skin);
+        addressLabel.setFontScale(8.0f);
+        Label addressLabel2 = new Label("PRESS E TO EXIT", skin);
+        addressLabel2.setFontScale(8.0f);
+        root.add(nameLabel).padBottom(20);  // Add some padding
+        root.row();  // Move to the next row in the table
+        root.add(addressLabel).padBottom(20);
+        root.row();
+        root.add(addressLabel2);
+
+        // Render the stage
+        stage.act();  // Update the stage
+        stage.draw();
+    }
+
+    private void checkForPauseInput() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            gameState = GameState.PAUSED;  // Switch to PAUSED state
         }
     }
 
@@ -153,14 +271,15 @@ public class Main implements ApplicationListener {
             // Remove the drop if it's off the screen
             if (dropSprite.getY() < -dropHeight) {
                 dropSprites.removeIndex(i);  // Safely remove the drop
-                score[0]++;
-                Score= "" +score[0];
+                score++;
+                Score= "" +score;
             }
             // Check for collision between the drop and the PlayerCar
             if (PlayerCarRectangle.overlaps(dropRectangle)) {
                 dropSprites.removeIndex(i);  // Remove the drop upon collision
                 dropSound.play();            // Play the sound
-                score [0]=0;                   // Reset the score (or perform other logic)
+                checkAndUpdateHighScore(score);
+                score=0;                   // Reset the score (or perform other logic)
 
                 float delay = 0.4f; // Delay in seconds before ending the game
 
@@ -168,8 +287,8 @@ public class Main implements ApplicationListener {
                     @Override
                     public void run() {
                         // End game logic after the delay
-                        gameOver[0] = true;// You can call a method that handles ending the game
-                        restartMenu(score,dropSprites,gameOver,PlayerCarSprite,viewport);
+                        gameState = GameState.GAMEOVER;
+                        drawGameOverMenu();
                     }
                 }, delay);  // Schedule the task to run after 'delay' seconds
             }
@@ -205,8 +324,8 @@ public class Main implements ApplicationListener {
         }
         if (gameOver[0]) {
             // Draw the Game Over texture at the center of the viewport
-            spriteBatch.draw(GameoverTexture, viewport.getWorldWidth() / 2 - GameoverTexture.getWidth() / 2,
-                viewport.getWorldHeight() / 2 - GameoverTexture.getHeight() / 2);
+            spriteBatch.draw(GameoverTexture, viewport.getWorldWidth() / 2 - (float) GameoverTexture.getWidth() / 2,
+                viewport.getWorldHeight() / 2 - (float) GameoverTexture.getHeight() / 2);
         }
 
         // Set the color and draw the score at the top-left corner, dynamically adjusting for viewport size
@@ -238,14 +357,16 @@ public class Main implements ApplicationListener {
         dropSprites.add(dropSprite);
     }
 
-    static void restartMenu(int[] score, Array<Sprite> dropSprites, boolean[] gameOver, Sprite PlayerCarSprite, FitViewport viewport) {
+    static void  drawGameOverMenu () {
         // Check for user input to restart the game or exit
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            restartGame(score, dropSprites, gameOver, PlayerCarSprite, viewport);  // Restart the game
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R) || Gdx.input.isTouched()) {
+            restartGame(score, dropSprites, PlayerCarSprite, viewport);  // Restart the game
+            gameState = GameState.RUNNING;
         }
 
+
         if (Gdx.input.isTouched()) {
-            restartGame(score, dropSprites, gameOver, PlayerCarSprite, viewport);  // Restart on screen tap
+            restartGame(score, dropSprites, PlayerCarSprite, viewport);  // Restart on screen tap
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
@@ -270,11 +391,13 @@ public class Main implements ApplicationListener {
         addressLabel.setFontScale(8.0f);
         Label addressLabel2 = new Label("PRESS E TO EXIT", skin);
         addressLabel2.setFontScale(8.0f);
-
-
+        Label highScoreLabel = new Label("High Score: " + getHighScore(), skin);
+        highScoreLabel.setFontScale(2.0f); // Scale the font for visibility
 
         // Add elements to the table
         Table table = new Table();
+        table.add(highScoreLabel);
+        table.row();
         table.add(nameLabel);
         table.row();
         table.add(addressLabel);
@@ -288,10 +411,9 @@ public class Main implements ApplicationListener {
     }
 
 
-    public static void restartGame(int[] score, Array<Sprite> dropSprites, boolean[] gameOver, Sprite PlayerCarSprite, FitViewport viewport) {
-        score[0] = 0;  // Reset the score
+    public static void restartGame(int score, Array<Sprite> dropSprites, Sprite PlayerCarSprite, FitViewport viewport) {
+        score = 0;  // Reset the score
         dropSprites.clear();  // Clear all drops
-        gameOver[0] = false;  // Set gameOver to false
 
         // Reset player position
         PlayerCarSprite.setPosition(viewport.getWorldWidth() / 2 - PlayerCarSprite.getWidth() / 2, 1);
@@ -318,5 +440,6 @@ public class Main implements ApplicationListener {
         music.dispose();
         spriteBatch.dispose();
     }
+
 
 }
