@@ -1,4 +1,4 @@
-package io.github.testcar;
+package io.github.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
