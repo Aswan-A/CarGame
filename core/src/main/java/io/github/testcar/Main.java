@@ -1,4 +1,4 @@
-package io.github.test;
+package io.github.testcar;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -60,8 +60,8 @@ public class Main implements ApplicationListener {
 
     @Override
     public void create() {
-        backgroundTexture = new Texture("background.png");
-        buildingTexture=new Texture ("d544eb4e9cc0ea9d537dbb2e52d249c3.jpg");
+        backgroundTexture = new Texture("WhatsApp Image 2024-10-15 at 19.49.58_41e090b8.jpg");
+        buildingTexture=new Texture ("9481aa84d9446fd65a074a0341cbdbf2 (1).jpg");
         PlayerCarTexture = new Texture("pop.png");
         dropTexture = new Texture("drop.png");
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
@@ -69,10 +69,13 @@ public class Main implements ApplicationListener {
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(15, 10);
         backgroundSprite=new Sprite(backgroundTexture);
-        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
+        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         backgroundSprite2=new Sprite(backgroundTexture);
-        backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
+        backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         backgroundSprite2.setY(0);
+        buildingSprite = new Sprite(buildingTexture); // Initialize the building sprite
+        buildingSprite.setSize(5, 5);
+        buildingSprite.setY(0);
         PlayerCarSprite = new Sprite(PlayerCarTexture);
         PlayerCarSprite.setSize(3, 3);
         touchPos = new Vector2();
@@ -258,6 +261,7 @@ public class Main implements ApplicationListener {
         }
 
 
+
         backgroundSprite.translateY(-6f * delta);
         backgroundSprite2.translateY(-6f * delta);
 
@@ -323,19 +327,20 @@ public class Main implements ApplicationListener {
         backgroundSprite.draw(spriteBatch);
         backgroundSprite2.draw(spriteBatch);
 
-        // Calculate position for the building texture
-        float xPosition = (viewport.getWorldWidth() - buildingTexture.getWidth()) / 2; // Center it horizontally
-        float yPosition = viewport.getWorldHeight()/2; // Position it at the top
-        float buildingWidth = (float) 1920;  // Adjust to your preferred width
-        float buildingHeight = (float) 540;  // Adjust to your preferred height
-        // Draw the building texture at the top
-        float backgroundHeight = backgroundSprite.getHeight();
+        // Calculate position and size for the building texture
+        float buildingWidth = viewport.getWorldWidth();  // Fit to the full width of the viewport
+        float buildingHeight = buildingWidth * ((float) buildingTexture.getHeight() / buildingTexture.getWidth()); // Maintain aspect ratio
 
+        // Draw the building texture at the top
+        float xPosition = 0;  // Starting from the left edge
+        float yPosition = viewport.getWorldHeight() - buildingHeight;  // Position it at the top
+        float backgroundHeight = backgroundSprite.getHeight();
         if (backgroundSprite.getY() <= 0 && fl==1) {
             backgroundSprite.setY(backgroundSprite2.getY() + backgroundHeight);
             fl=0;
         }
-        spriteBatch.draw(buildingTexture, xPosition, yPosition,buildingWidth, buildingHeight);
+        spriteBatch.draw(buildingTexture, xPosition, yPosition, buildingWidth, buildingHeight);
+
         // Draw player car
         PlayerCarSprite.draw(spriteBatch);
 
