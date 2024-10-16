@@ -36,7 +36,7 @@ public class Main implements ApplicationListener {
     static Sprite PlayerCarSprite;
     Sprite backgroundSprite;
     Sprite backgroundSprite2;
-
+    Sprite buildingSprite;
     Vector2 touchPos;
     static Array<Sprite> dropSprites;
     float dropTimer;
@@ -61,7 +61,7 @@ public class Main implements ApplicationListener {
     @Override
     public void create() {
         backgroundTexture = new Texture("background.png");
-        buildingTexture=new Texture ("Building.png");
+        buildingTexture=new Texture ("d544eb4e9cc0ea9d537dbb2e52d249c3.jpg");
         PlayerCarTexture = new Texture("pop.png");
         dropTexture = new Texture("drop.png");
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
@@ -73,8 +73,6 @@ public class Main implements ApplicationListener {
         backgroundSprite2=new Sprite(backgroundTexture);
         backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
         backgroundSprite2.setY(0);
-        buildingTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear); // Optional: Set filtering
-
         PlayerCarSprite = new Sprite(PlayerCarTexture);
         PlayerCarSprite.setSize(3, 3);
         touchPos = new Vector2();
@@ -90,7 +88,6 @@ public class Main implements ApplicationListener {
         yourfont.getData().setScale(0.1f, 0.1f);
         preferences = Gdx.app.getPreferences("MyGamePreferences");
         highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
-
     }
 
     @Override
@@ -329,8 +326,8 @@ public class Main implements ApplicationListener {
         // Calculate position for the building texture
         float xPosition = (viewport.getWorldWidth() - buildingTexture.getWidth()) / 2; // Center it horizontally
         float yPosition = viewport.getWorldHeight()/2; // Position it at the top
-        float buildingWidth = 1920;  // Adjust to your preferred width
-        float buildingHeight = 540;  // Adjust to your preferred height
+        float buildingWidth = (float) 1920;  // Adjust to your preferred width
+        float buildingHeight = (float) 540;  // Adjust to your preferred height
         // Draw the building texture at the top
         float backgroundHeight = backgroundSprite.getHeight();
 
@@ -339,7 +336,6 @@ public class Main implements ApplicationListener {
             fl=0;
         }
         spriteBatch.draw(buildingTexture, xPosition, yPosition,buildingWidth, buildingHeight);
-
         // Draw player car
         PlayerCarSprite.draw(spriteBatch);
 
