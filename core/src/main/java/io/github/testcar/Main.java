@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
@@ -22,13 +23,16 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.Preferences;
 
+import java.awt.*;
+
 
 public class Main implements ApplicationListener {
     Texture backgroundTexture;
-    Texture buildingTexture;
     Texture PlayerCarTexture;
     Texture dropTexture;
     Texture GameoverTexture;
+    Texture shadowTexture;
+    Texture shadowTexture2;
     Sound dropSound;
     Music music;
     SpriteBatch spriteBatch;
@@ -36,7 +40,8 @@ public class Main implements ApplicationListener {
     static Sprite PlayerCarSprite;
     Sprite backgroundSprite;
     Sprite backgroundSprite2;
-    Sprite buildingSprite;
+    Sprite shadowSprite;
+    Sprite shadowSprite2;
     Vector2 touchPos;
     static Array<Sprite> dropSprites;
     float dropTimer;
@@ -48,7 +53,12 @@ public class Main implements ApplicationListener {
     static boolean[] gameOver = {false};
     private static Skin skin;
     private int fl=1;
-
+    float shadowY;
+    float shadowY2;
+    float shadowSpeed;
+    int u;
+    Texture buildingTexture;
+    Sprite buildingSprite;
     enum GameState {
         RUNNING, PAUSED, GAMEOVER,MAINMENU
     }
@@ -60,12 +70,14 @@ public class Main implements ApplicationListener {
 
     @Override
     public void create() {
-        backgroundTexture = new Texture("WhatsApp Image 2024-10-15 at 19.49.58_41e090b8.jpg");
-        buildingTexture=new Texture ("9481aa84d9446fd65a074a0341cbdbf2 (1).jpg");
+        backgroundTexture = new Texture("pixil-frame-0 (2).png");
         PlayerCarTexture = new Texture("pop.png");
+        buildingTexture=new Texture ("Building.png");
         dropTexture = new Texture("drop.png");
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        shadowTexture=new Texture("resized_black_white_alternate_lines_shadow.png");
+        shadowTexture2=new Texture("resized_black_white_alternate_lines_shadow.png");
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(15, 10);
         backgroundSprite=new Sprite(backgroundTexture);
@@ -73,9 +85,12 @@ public class Main implements ApplicationListener {
         backgroundSprite2=new Sprite(backgroundTexture);
         backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         backgroundSprite2.setY(0);
-        buildingSprite = new Sprite(buildingTexture); // Initialize the building sprite
-        buildingSprite.setSize(5, 5);
-        buildingSprite.setY(0);
+        shadowSprite=new Sprite(shadowTexture);
+        shadowSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
+        shadowSprite.setY(0);
+        shadowSprite2=new Sprite(backgroundTexture);
+        shadowSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
+        shadowSprite2.setY(0);
         PlayerCarSprite = new Sprite(PlayerCarTexture);
         PlayerCarSprite.setSize(3, 3);
         touchPos = new Vector2();
@@ -91,6 +106,13 @@ public class Main implements ApplicationListener {
         yourfont.getData().setScale(0.1f, 0.1f);
         preferences = Gdx.app.getPreferences("MyGamePreferences");
         highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
+        shadowSprite.setPosition(0, 0);
+        shadowSprite2.setPosition(25, 25); // Ensure both shadows start in view
+        shadowY = 0;   // Initial Y position
+        shadowY2=0;
+        shadowSpeed = 4f;  // Speed of the shadow movement (in pixels per second)
+        u=1;
+        buildingSprite = new Sprite(buildingTexture);
     }
 
     @Override
@@ -259,62 +281,6 @@ public class Main implements ApplicationListener {
         if (backgroundSprite2.getY() <= -backgroundHeight) {
             backgroundSprite2.setY(backgroundSprite.getY() + backgroundHeight);
         }
-
-
-
-        backgroundSprite.translateY(-6f * delta);
-        backgroundSprite2.translateY(-6f * delta);
-
-
-        for (int i = dropSprites.size - 1; i >= 0; i--) {
-            Sprite dropSprite = dropSprites.get(i);
-            float dropWidth = dropSprite.getWidth();
-            float dropHeight = dropSprite.getHeight();
-
-            // Move the drop down
-            dropSprite.translateY(-8f * delta);
-
-            // Update the drop's rectangle for collision detection
-            dropRectangle.set(dropSprite.getX(), dropSprite.getY(), dropWidth, dropHeight);
-
-            // Remove the drop if it's off the screen
-
-            // Check for collision between the drop and the PlayerCar
-            if (PlayerCarRectangle.overlaps(dropRectangle)) {
-                dropSprites.removeIndex(i);  // Remove the drop upon collision
-                dropSound.play();            // Play the sound
-                checkAndUpdateHighScore(score);
-
-                flag=1;
-                float delay = 0.9f; // Delay in seconds before ending the game
-
-                Timer.schedule(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        // End game logic after the delay
-                        gameState = GameState.GAMEOVER;
-                        drawGameOverMenu();
-                        flag=0;
-                        score=0;                   // Reset the score (or perform other logic)
-                        Score= "" +score;
-                    }
-                }, delay);  // Schedule the task to run after 'delay' seconds
-
-            }
-            if (flag!=1 && dropSprite.getY() < -dropHeight && gameState != GameState.GAMEOVER && !PlayerCarRectangle.overlaps(dropRectangle)) {
-                dropSprites.removeIndex(i);  // Safely remove the drop
-                score++;
-                Score= "" +score;
-            }
-
-        }
-
-
-        dropTimer += delta;
-        if (dropTimer > 0.5f) {
-            dropTimer = 0;
-            createDroplet();
-        }
     }
 
     private void draw() {
@@ -324,36 +290,57 @@ public class Main implements ApplicationListener {
         spriteBatch.begin();
 
         // Draw the background first
-        backgroundSprite.draw(spriteBatch);
-        backgroundSprite2.draw(spriteBatch);
 
-        // Calculate position and size for the building texture
-        float buildingWidth = viewport.getWorldWidth();  // Fit to the full width of the viewport
-        float buildingHeight = buildingWidth * ((float) buildingTexture.getHeight() / buildingTexture.getWidth()); // Maintain aspect ratio
 
-        // Draw the building texture at the top
-        float xPosition = 0;  // Starting from the left edge
-        float yPosition = viewport.getWorldHeight() - buildingHeight;  // Position it at the top
         float backgroundHeight = backgroundSprite.getHeight();
         if (backgroundSprite.getY() <= 0 && fl==1) {
             backgroundSprite.setY(backgroundSprite2.getY() + backgroundHeight);
             fl=0;
         }
-        spriteBatch.draw(buildingTexture, xPosition, yPosition, buildingWidth, buildingHeight);
+        backgroundSprite.draw(spriteBatch);
+        backgroundSprite2.draw(spriteBatch);
+        float delta = Gdx.graphics.getDeltaTime();
 
-        // Draw player car
-        PlayerCarSprite.draw(spriteBatch);
+        // Draw shadows with transparency
+        spriteBatch.setColor(1f, 1f, 1f, 0.1f); // Set opacity to 0.5 (50% transparent)
 
-        // Draw the raindrops
-        for (Sprite dropSprite : dropSprites) {
-            dropSprite.draw(spriteBatch);
+        // Update the positions of both shadows
+        shadowY += -shadowSpeed * delta;
+        shadowY2 += -shadowSpeed * delta;
+
+        float shadowHeight = viewport.getWorldHeight() / 2;  // Height of each shadow texture
+
+// Draw the shadow textures
+        spriteBatch.draw(shadowTexture, 0, shadowY, viewport.getWorldWidth(), shadowHeight);
+        spriteBatch.draw(shadowTexture2, 0, shadowY2, viewport.getWorldWidth(), shadowHeight);
+        if(shadowY<0 && u==1){
+            shadowY2=shadowY+shadowHeight;
+            u=0;
+        }
+// Check if the shadow textures have gone off the screen, and reset their positions
+        if (shadowY <= -shadowHeight) {
+            shadowY = shadowY2 + shadowHeight;  // Place it right above shadowTexture2
+        }
+        if (shadowY2 <= -shadowHeight) {
+            shadowY2 = shadowY + shadowHeight;  // Place it right above shadowTexture
         }
 
+
+        // Reset color to white for other drawing
+        spriteBatch.setColor(1f, 1f, 1f, 1f);
+        // Draw player car
+
+        PlayerCarSprite.draw(spriteBatch);
+        float buildingWidth = viewport.getWorldWidth();  // Fit to the full width of the viewport
+        float buildingHeight = buildingWidth * ((float) buildingTexture.getHeight() / buildingTexture.getWidth()); // Maintain aspect ratio
         // Draw Game Over texture if the game is over
         if (gameOver[0]) {
             spriteBatch.draw(GameoverTexture, viewport.getWorldWidth() / 2 - (float) GameoverTexture.getWidth() / 2,
                 viewport.getWorldHeight() / 2 - (float) GameoverTexture.getHeight() / 2);
         }
+        float xPosition = 0;  // Starting from the left edge
+        float yPosition = viewport.getWorldHeight() - buildingHeight;  // Position it at the top
+        spriteBatch.draw(buildingTexture, xPosition, yPosition, buildingWidth, buildingHeight);
 
         // Draw the score at the top-left corner
         yourfont.setColor(Color.WHITE);
