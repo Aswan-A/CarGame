@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.awt.*;
 
@@ -58,7 +59,10 @@ public class Main implements ApplicationListener {
     float shadowSpeed;
     int u;
     Texture buildingTexture;
+    Texture TreeTexture;
+    Texture TreeTexture2;
     Sprite buildingSprite;
+    Sprite TreeSprite;
     enum GameState {
         RUNNING, PAUSED, GAMEOVER,MAINMENU
     }
@@ -67,21 +71,29 @@ public class Main implements ApplicationListener {
     private static final String HIGH_SCORE_KEY = "high_score";
     private static int highScore=0;
     int flag=0;
+    float treeY;
+    float treeX;
+    float treeX2;
+    float treeSpeed;
+    float scale2;
 
     @Override
     public void create() {
         backgroundTexture = new Texture("pixil-frame-0 (2).png");
         PlayerCarTexture = new Texture("pop.png");
         buildingTexture=new Texture ("Building.png");
+        TreeTexture=new Texture("Tree.png");
+        TreeTexture2=new Texture("Tree.png");
         dropTexture = new Texture("drop.png");
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         shadowTexture=new Texture("resized_black_white_alternate_lines_shadow.png");
         shadowTexture2=new Texture("resized_black_white_alternate_lines_shadow.png");
         spriteBatch = new SpriteBatch();
-        viewport = new FitViewport(15, 10);
+        viewport = new FitViewport(35, 20);
         backgroundSprite=new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+
         backgroundSprite2=new Sprite(backgroundTexture);
         backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         backgroundSprite2.setY(0);
@@ -113,6 +125,11 @@ public class Main implements ApplicationListener {
         shadowSpeed = 4f;  // Speed of the shadow movement (in pixels per second)
         u=1;
         buildingSprite = new Sprite(buildingTexture);
+        treeY = viewport.getWorldHeight()*15/32;
+        treeX = viewport.getWorldWidth()/2;
+        treeX2 = viewport.getWorldWidth()/2;
+        treeSpeed = 15f;  // Adjust the speed as necessary
+        scale2 = 0.0f;
     }
 
     @Override
@@ -308,6 +325,7 @@ public class Main implements ApplicationListener {
         shadowY += -shadowSpeed * delta;
         shadowY2 += -shadowSpeed * delta;
 
+
         float shadowHeight = viewport.getWorldHeight() / 2;  // Height of each shadow texture
 
 // Draw the shadow textures
@@ -328,6 +346,31 @@ public class Main implements ApplicationListener {
 
         // Reset color to white for other drawing
         spriteBatch.setColor(1f, 1f, 1f, 1f);
+
+        // Update the tree's position (moving it downwards)
+        treeY -= treeSpeed * delta;
+        treeX -= treeSpeed *delta;
+        treeX2 += treeSpeed*delta;
+        float scale = 0.01f;  // Scale factor
+
+
+// Check if the tree is outside the bottom of the screen
+        if (treeY + (TreeTexture.getHeight())*scale< 0) {
+            // Reset the tree's position to the top
+            treeY = viewport.getWorldHeight()*15/32;
+            treeX= viewport.getWorldWidth()/2;
+            treeX2= viewport.getWorldWidth()/2;
+            scale2=0;
+
+        }
+// Draw the tree texture at its current position
+        scale2=scale2+0.0005f;
+        float treeWidth = TreeTexture.getWidth() * (scale2);
+        float treeHeight = TreeTexture.getHeight() * scale2;
+
+        spriteBatch.draw(TreeTexture, treeX, treeY, treeWidth, treeHeight);
+        spriteBatch.draw(TreeTexture2, treeX2, treeY, treeWidth, treeHeight);
+
         // Draw player car
 
         PlayerCarSprite.draw(spriteBatch);
@@ -340,7 +383,6 @@ public class Main implements ApplicationListener {
         }
         float xPosition = 0;  // Starting from the left edge
         float yPosition = viewport.getWorldHeight() - buildingHeight;  // Position it at the top
-        spriteBatch.draw(buildingTexture, xPosition, yPosition, buildingWidth, buildingHeight);
 
         // Draw the score at the top-left corner
         yourfont.setColor(Color.WHITE);
