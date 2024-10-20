@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -39,6 +40,7 @@ public class Main implements ApplicationListener {
     SpriteBatch spriteBatch;
     static FitViewport viewport;
     static Sprite PlayerCarSprite;
+    static Sprite treeSprite;
     Sprite backgroundSprite;
     Sprite backgroundSprite2;
     Sprite shadowSprite;
@@ -105,6 +107,9 @@ public class Main implements ApplicationListener {
         shadowSprite2.setY(0);
         PlayerCarSprite = new Sprite(PlayerCarTexture);
         PlayerCarSprite.setSize(3, 3);
+
+        treeSprite = new Sprite(TreeTexture);
+
         touchPos = new Vector2();
         dropSprites = new Array<>();
         PlayerCarRectangle = new Rectangle();
@@ -128,7 +133,7 @@ public class Main implements ApplicationListener {
         treeY = viewport.getWorldHeight()*15/32;
         treeX = viewport.getWorldWidth()/2;
         treeX2 = viewport.getWorldWidth()/2;
-        treeSpeed = 15f;  // Adjust the speed as necessary
+        treeSpeed = 1f;  // Adjust the speed as necessary
         scale2 = 0.0f;
     }
 
@@ -329,8 +334,6 @@ public class Main implements ApplicationListener {
         float shadowHeight = viewport.getWorldHeight() / 2;  // Height of each shadow texture
 
 // Draw the shadow textures
-        spriteBatch.draw(shadowTexture, 0, shadowY, viewport.getWorldWidth(), shadowHeight);
-        spriteBatch.draw(shadowTexture2, 0, shadowY2, viewport.getWorldWidth(), shadowHeight);
         if(shadowY<0 && u==1){
             shadowY2=shadowY+shadowHeight;
             u=0;
@@ -348,14 +351,15 @@ public class Main implements ApplicationListener {
         spriteBatch.setColor(1f, 1f, 1f, 1f);
 
         // Update the tree's position (moving it downwards)
-        treeY -= treeSpeed * delta;
+
         treeX -= treeSpeed *delta;
-        treeX2 += treeSpeed*delta;
+        treeX2 += treeSpeed *delta;
+        treeY -= treeSpeed * delta;
         float scale = 0.01f;  // Scale factor
 
 
 // Check if the tree is outside the bottom of the screen
-        if (treeY + (TreeTexture.getHeight())*scale< 0) {
+        if (treeY + (TreeTexture.getHeight())*scale2< 0) {
             // Reset the tree's position to the top
             treeY = viewport.getWorldHeight()*15/32;
             treeX= viewport.getWorldWidth()/2;
@@ -364,11 +368,18 @@ public class Main implements ApplicationListener {
 
         }
 // Draw the tree texture at its current position
-        scale2=scale2+0.0005f;
-        float treeWidth = TreeTexture.getWidth() * (scale2);
+        if (scale2 < 0.018f) {
+            scale2 += 0.00003f;
+        }
+        float treeWidth = TreeTexture.getWidth() * scale2;
         float treeHeight = TreeTexture.getHeight() * scale2;
 
-        spriteBatch.draw(TreeTexture, treeX, treeY, treeWidth, treeHeight);
+        treeSprite.setOriginCenter();
+        treeSprite.setPosition(treeX, treeY);
+        treeSprite.setSize(treeWidth, treeHeight);
+
+        treeSprite.draw(spriteBatch);
+
         spriteBatch.draw(TreeTexture2, treeX2, treeY, treeWidth, treeHeight);
 
         // Draw player car
