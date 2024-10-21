@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -19,13 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.utils.viewport.Viewport;
-
-import java.awt.*;
 
 
 public class Main implements ApplicationListener {
@@ -41,6 +36,8 @@ public class Main implements ApplicationListener {
     static FitViewport viewport;
     static Sprite PlayerCarSprite;
     static Sprite treeSprite;
+    static Sprite treeSprite2;
+
     Sprite backgroundSprite;
     Sprite backgroundSprite2;
     Sprite shadowSprite;
@@ -54,7 +51,6 @@ public class Main implements ApplicationListener {
     private String Score;
     BitmapFont yourfont;
     static boolean[] gameOver = {false};
-    private static Skin skin;
     private int fl=1;
     float shadowY;
     float shadowY2;
@@ -65,6 +61,12 @@ public class Main implements ApplicationListener {
     Texture TreeTexture2;
     Sprite buildingSprite;
     Sprite TreeSprite;
+    private float treeX3;
+    Texture BuildTexture;
+    private Sprite BuildSprite;
+    private Sprite treeSprite3;
+    private Sprite treeSprite4;
+
     enum GameState {
         RUNNING, PAUSED, GAMEOVER,MAINMENU
     }
@@ -81,9 +83,10 @@ public class Main implements ApplicationListener {
 
     @Override
     public void create() {
-        backgroundTexture = new Texture("pixil-frame-0 (2).png");
+        backgroundTexture = new Texture("Slide 16_9 - 1.png");
         PlayerCarTexture = new Texture("pop.png");
         buildingTexture=new Texture ("Building.png");
+        BuildTexture=new Texture("Build3.png");
         TreeTexture=new Texture("Tree.png");
         TreeTexture2=new Texture("Tree.png");
         dropTexture = new Texture("drop.png");
@@ -107,8 +110,13 @@ public class Main implements ApplicationListener {
         shadowSprite2.setY(0);
         PlayerCarSprite = new Sprite(PlayerCarTexture);
         PlayerCarSprite.setSize(3, 3);
-
+        BuildSprite=new Sprite(BuildTexture);
         treeSprite = new Sprite(TreeTexture);
+        treeSprite.setOrigin(TreeTexture.getWidth(),0);
+        treeSprite2 = new Sprite(TreeTexture);
+
+        treeSprite2.flip(true,false);
+
 
         touchPos = new Vector2();
         dropSprites = new Array<>();
@@ -132,8 +140,9 @@ public class Main implements ApplicationListener {
         buildingSprite = new Sprite(buildingTexture);
         treeY = viewport.getWorldHeight()*15/32;
         treeX = viewport.getWorldWidth()/2;
+        treeX3= viewport.getWorldWidth()/2;
         treeX2 = viewport.getWorldWidth()/2;
-        treeSpeed = 1f;  // Adjust the speed as necessary
+        treeSpeed = 2f;  // Adjust the speed as necessary
         scale2 = 0.0f;
     }
 
@@ -208,9 +217,6 @@ public class Main implements ApplicationListener {
     public static int getHighScore() {
         return highScore;
     }
-
-
-
     private void handlePauseInput() {
         // If the player presses ESC again, resume the game
         if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
@@ -352,36 +358,61 @@ public class Main implements ApplicationListener {
 
         // Update the tree's position (moving it downwards)
 
-        treeX -= treeSpeed *delta;
-        treeX2 += treeSpeed *delta;
-        treeY -= treeSpeed * delta;
-        float scale = 0.01f;  // Scale factor
 
 
 // Check if the tree is outside the bottom of the screen
         if (treeY + (TreeTexture.getHeight())*scale2< 0) {
             // Reset the tree's position to the top
+            treeSprite = createtree();  // Create a new sprite when the tree goes off screen
+            treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
             treeY = viewport.getWorldHeight()*15/32;
             treeX= viewport.getWorldWidth()/2;
             treeX2= viewport.getWorldWidth()/2;
+            treeX3= viewport.getWorldWidth()/2;
             scale2=0;
-
+        }
+        if (Math.abs(treeY + (TreeTexture.getHeight())*scale2 - viewport.getWorldHeight()/4) < 0.01f)  {
+            // Reset the tree's position to the top
+            treeSprite3 = createtree();  // Create a new sprite when the tree goes off screen
+            treeSprite4 = createtree();
         }
 // Draw the tree texture at its current position
         if (scale2 < 0.018f) {
             scale2 += 0.00003f;
         }
+
         float treeWidth = TreeTexture.getWidth() * scale2;
         float treeHeight = TreeTexture.getHeight() * scale2;
+        treeX -= treeSpeed *delta;
+        treeX3=treeX-treeWidth;
+        treeX2 += treeSpeed *delta;
+        treeY -= treeSpeed * delta;
+        if (treeSprite != null) {
+            treeSprite.setPosition(treeX3, treeY);
+            treeSprite.setSize(treeWidth, treeHeight);
+            treeSprite.draw(spriteBatch);
+        }
 
-        treeSprite.setOriginCenter();
-        treeSprite.setPosition(treeX, treeY);
-        treeSprite.setSize(treeWidth, treeHeight);
+// Only draw treeSprite2 if it's not null
+        if (treeSprite4 != null) {
+            treeSprite4.setPosition(treeX2, treeY);
+            treeSprite4.setSize(treeWidth, treeHeight);
+            treeSprite4.draw(spriteBatch);
+        }
+        if (treeSprite3 != null) {
+            treeSprite3.setPosition(treeX3, treeY);
+            treeSprite3.setSize(treeWidth, treeHeight);
+            treeSprite3.draw(spriteBatch);
+        }
 
-        treeSprite.draw(spriteBatch);
-
-        spriteBatch.draw(TreeTexture2, treeX2, treeY, treeWidth, treeHeight);
-
+// Only draw treeSprite2 if it's not null
+        if (treeSprite2 != null) {
+            treeSprite2.setPosition(treeX2, treeY);
+            treeSprite2.setSize(treeWidth, treeHeight);
+            treeSprite2.draw(spriteBatch);
+        }
+        BuildSprite.setPosition(treeX3, treeY);
+        BuildSprite.setSize(treeWidth, treeHeight);
         // Draw player car
 
         PlayerCarSprite.draw(spriteBatch);
@@ -403,26 +434,26 @@ public class Main implements ApplicationListener {
     }
 
 
-    private void createDroplet() {
-        float dropWidth = 1;
-        float dropHeight = 2f;
-        float worldHeight = viewport.getWorldHeight();
+    private Sprite createtree() {
+        // Adjust size to match tree sprite size
+        float treeWidth = TreeTexture.getWidth();
+        float treeHeight = TreeTexture.getHeight();
 
-        // Define lane positions (adjust based on your game width)
-        float[] lanePositions = {3f,4f, 6f,7f, 9f,11f,12f};  // Example: 3 lanes at these x-positions
+        // Randomly decide whether to create a tree or a building sprite
+        int randomChoice = MathUtils.random(3);  // 0 for tree, 1 for building
 
-        Sprite dropSprite = new Sprite(dropTexture);
-        dropSprite.setSize(dropWidth, dropHeight);
+        Sprite newSprite = null;
+        if (randomChoice == 0) {
+            newSprite = new Sprite(TreeTexture);  // Create a tree sprite
+        } else if(randomChoice==1) {
+            newSprite = new Sprite(BuildTexture);  // Create a building sprite
+        }
 
-        // Randomly select a lane for the drop to appear in
-        int laneIndex = MathUtils.random(0, lanePositions.length - 1);
-        float laneX = lanePositions[laneIndex];
-
-        // Set the drop to appear at the selected lane's x-position
-        dropSprite.setX(laneX - dropWidth / 2);  // Centering the drop in the lane
-        dropSprite.setY(worldHeight);  // Start the drop at the top of the screen
-        dropSprites.add(dropSprite);
+        if(newSprite != null)
+            newSprite.setSize(treeWidth, treeHeight);  // Set its size
+        return newSprite;
     }
+
 
     static void  drawGameOverMenu () {
         // Check for user input to restart the game or exit
@@ -499,14 +530,22 @@ public class Main implements ApplicationListener {
 
     @Override
     public void dispose() {
-        skin.dispose();
+        backgroundTexture.dispose();
         PlayerCarTexture.dispose();
         dropTexture.dispose();
-        backgroundTexture.dispose();
+        if (GameoverTexture != null) {
+            GameoverTexture.dispose();
+        }
+        shadowTexture.dispose();
+        shadowTexture2.dispose();
         dropSound.dispose();
         music.dispose();
         spriteBatch.dispose();
+        buildingTexture.dispose();
+        TreeTexture.dispose();
+        TreeTexture2.dispose();
+        BuildTexture.dispose();
+        yourfont.dispose();
     }
-
 
 }
