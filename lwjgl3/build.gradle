@@ -4,6 +4,7 @@ buildscript {
     gradlePluginPortal()
   }
   dependencies {
+
     if(enableGraalNative == 'true') {
       classpath "org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:0.9.28"
     }
@@ -28,6 +29,7 @@ if (JavaVersion.current().isJava9Compatible()) {
 }
 
 dependencies {
+  implementation files('/usr/local/share/java/opencv4')
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"

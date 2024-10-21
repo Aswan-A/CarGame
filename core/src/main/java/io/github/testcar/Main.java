@@ -1,4 +1,4 @@
-package io.github.test;
+package io.github.testcar;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -25,7 +25,6 @@ import com.badlogic.gdx.Preferences;
 
 public class Main implements ApplicationListener {
     Texture backgroundTexture;
-    Texture buildingTexture;
     Texture PlayerCarTexture;
     Texture dropTexture;
     Texture GameoverTexture;
@@ -36,7 +35,6 @@ public class Main implements ApplicationListener {
     static Sprite PlayerCarSprite;
     Sprite backgroundSprite;
     Sprite backgroundSprite2;
-    Sprite buildingSprite;
     Vector2 touchPos;
     static Array<Sprite> dropSprites;
     float dropTimer;
@@ -47,8 +45,6 @@ public class Main implements ApplicationListener {
     BitmapFont yourfont;
     static boolean[] gameOver = {false};
     private static Skin skin;
-    private int fl=1;
-
     enum GameState {
         RUNNING, PAUSED, GAMEOVER,MAINMENU
     }
@@ -61,20 +57,19 @@ public class Main implements ApplicationListener {
     @Override
     public void create() {
         backgroundTexture = new Texture("background.png");
-        buildingTexture=new Texture ("d544eb4e9cc0ea9d537dbb2e52d249c3.jpg");
-        PlayerCarTexture = new Texture("pop.png");
+        PlayerCarTexture = new Texture("PlayerCar.png");
         dropTexture = new Texture("drop.png");
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(15, 10);
         backgroundSprite=new Sprite(backgroundTexture);
-        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
+        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         backgroundSprite2=new Sprite(backgroundTexture);
-        backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
-        backgroundSprite2.setY(0);
+        backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+        backgroundSprite2.setY(viewport.getWorldHeight());
         PlayerCarSprite = new Sprite(PlayerCarTexture);
-        PlayerCarSprite.setSize(3, 3);
+        PlayerCarSprite.setSize(1, 2);
         touchPos = new Vector2();
         dropSprites = new Array<>();
         PlayerCarRectangle = new Rectangle();
@@ -88,6 +83,11 @@ public class Main implements ApplicationListener {
         yourfont.getData().setScale(0.1f, 0.1f);
         preferences = Gdx.app.getPreferences("MyGamePreferences");
         highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
+
+        HeadTiltDetector headTiltDetector = new HeadTiltDetector();
+        Thread headTiltThread = new Thread(headTiltDetector);
+        headTiltThread.start();
+
     }
 
     @Override
@@ -97,6 +97,8 @@ public class Main implements ApplicationListener {
 
     @Override
     public void render() {
+        ScreenUtils.clear(0, 0, 0, 1);
+        input();
         ScreenUtils.clear(Color.BLACK);
         checkForPauseInput();
         switch (gameState) {
@@ -218,9 +220,17 @@ public class Main implements ApplicationListener {
 
     private void input() {
         if (gameOver[0]) return;
-        float speed = 12f;
+        float speed = 5f;
         float delta = Gdx.graphics.getDeltaTime();
-
+        double tiltAngle = HeadTiltDetector.getTiltAngle();
+        if (tiltAngle > 30) {
+            PlayerCarSprite.translateX(-speed * delta);  // Move right
+        } else if (tiltAngle < -30) {
+            PlayerCarSprite.translateX(speed * delta);  // Move left
+        }
+        else{
+            PlayerCarSprite.setCenterX(viewport.getWorldWidth()/2);
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             PlayerCarSprite.translateX(speed * delta);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -276,27 +286,6 @@ public class Main implements ApplicationListener {
             // Remove the drop if it's off the screen
 
             // Check for collision between the drop and the PlayerCar
-            if (PlayerCarRectangle.overlaps(dropRectangle)) {
-                dropSprites.removeIndex(i);  // Remove the drop upon collision
-                dropSound.play();            // Play the sound
-                checkAndUpdateHighScore(score);
-
-                flag=1;
-                float delay = 0.9f; // Delay in seconds before ending the game
-
-                Timer.schedule(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        // End game logic after the delay
-                        gameState = GameState.GAMEOVER;
-                        drawGameOverMenu();
-                        flag=0;
-                        score=0;                   // Reset the score (or perform other logic)
-                        Score= "" +score;
-                    }
-                }, delay);  // Schedule the task to run after 'delay' seconds
-
-            }
             if (flag!=1 && dropSprite.getY() < -dropHeight && gameState != GameState.GAMEOVER && !PlayerCarRectangle.overlaps(dropRectangle)) {
                 dropSprites.removeIndex(i);  // Safely remove the drop
                 score++;
@@ -318,24 +307,13 @@ public class Main implements ApplicationListener {
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         spriteBatch.begin();
+        yourfont.setColor(Color.WHITE);
+        yourfont.draw(spriteBatch, Score, 12, viewport.getWorldHeight()-.5f);
 
-        // Draw the background first
+        // Draw background
         backgroundSprite.draw(spriteBatch);
         backgroundSprite2.draw(spriteBatch);
 
-        // Calculate position for the building texture
-        float xPosition = (viewport.getWorldWidth() - buildingTexture.getWidth()) / 2; // Center it horizontally
-        float yPosition = viewport.getWorldHeight()/2; // Position it at the top
-        float buildingWidth = (float) 1920;  // Adjust to your preferred width
-        float buildingHeight = (float) 540;  // Adjust to your preferred height
-        // Draw the building texture at the top
-        float backgroundHeight = backgroundSprite.getHeight();
-
-        if (backgroundSprite.getY() <= 0 && fl==1) {
-            backgroundSprite.setY(backgroundSprite2.getY() + backgroundHeight);
-            fl=0;
-        }
-        spriteBatch.draw(buildingTexture, xPosition, yPosition,buildingWidth, buildingHeight);
         // Draw player car
         PlayerCarSprite.draw(spriteBatch);
 
@@ -343,16 +321,15 @@ public class Main implements ApplicationListener {
         for (Sprite dropSprite : dropSprites) {
             dropSprite.draw(spriteBatch);
         }
-
-        // Draw Game Over texture if the game is over
         if (gameOver[0]) {
+            // Draw the Game Over texture at the center of the viewport
             spriteBatch.draw(GameoverTexture, viewport.getWorldWidth() / 2 - (float) GameoverTexture.getWidth() / 2,
                 viewport.getWorldHeight() / 2 - (float) GameoverTexture.getHeight() / 2);
         }
 
-        // Draw the score at the top-left corner
+        // Set the color and draw the score at the top-left corner, dynamically adjusting for viewport size
         yourfont.setColor(Color.WHITE);
-        yourfont.draw(spriteBatch, Score, 12, viewport.getWorldHeight() - 0.5f); // Adjusted position
+        yourfont.draw(spriteBatch, Score, viewport.getWorldWidth()/2, viewport.getWorldHeight()-.5f);
 
         spriteBatch.end();
     }
@@ -461,6 +438,7 @@ public class Main implements ApplicationListener {
         dropSound.dispose();
         music.dispose();
         spriteBatch.dispose();
+        HeadTiltDetector.stop();
     }
 
 
