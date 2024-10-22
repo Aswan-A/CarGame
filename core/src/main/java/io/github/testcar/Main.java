@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 
 public class Main implements ApplicationListener {
@@ -66,6 +67,11 @@ public class Main implements ApplicationListener {
     private Sprite BuildSprite;
     private Sprite treeSprite3;
     private Sprite treeSprite4;
+    private float treeX4;
+    private float treeX5;
+    private float treeX6;
+    private float treeY2;
+    private int flag2=0;
 
     enum GameState {
         RUNNING, PAUSED, GAMEOVER,MAINMENU
@@ -83,7 +89,7 @@ public class Main implements ApplicationListener {
 
     @Override
     public void create() {
-        backgroundTexture = new Texture("Slide 16_9 - 1.png");
+        backgroundTexture = new Texture("578f6fba-fc0d-451f-8f90-535a1820a116.png");
         PlayerCarTexture = new Texture("pop.png");
         buildingTexture=new Texture ("Building.png");
         BuildTexture=new Texture("Build3.png");
@@ -115,9 +121,6 @@ public class Main implements ApplicationListener {
         treeSprite.setOrigin(TreeTexture.getWidth(),0);
         treeSprite2 = new Sprite(TreeTexture);
 
-        treeSprite2.flip(true,false);
-
-
         touchPos = new Vector2();
         dropSprites = new Array<>();
         PlayerCarRectangle = new Rectangle();
@@ -142,6 +145,11 @@ public class Main implements ApplicationListener {
         treeX = viewport.getWorldWidth()/2;
         treeX3= viewport.getWorldWidth()/2;
         treeX2 = viewport.getWorldWidth()/2;
+
+        treeY2 = viewport.getWorldHeight()*15/32;
+        treeX4= viewport.getWorldWidth()/2;
+        treeX5=viewport.getWorldWidth()/2;
+        treeX6=viewport.getWorldWidth()/2;
         treeSpeed = 2f;  // Adjust the speed as necessary
         scale2 = 0.0f;
     }
@@ -371,11 +379,8 @@ public class Main implements ApplicationListener {
             treeX3= viewport.getWorldWidth()/2;
             scale2=0;
         }
-        if (Math.abs(treeY + (TreeTexture.getHeight())*scale2 - viewport.getWorldHeight()/4) < 0.01f)  {
-            // Reset the tree's position to the top
-            treeSprite3 = createtree();  // Create a new sprite when the tree goes off screen
-            treeSprite4 = createtree();
-        }
+
+
 // Draw the tree texture at its current position
         if (scale2 < 0.018f) {
             scale2 += 0.00003f;
@@ -387,23 +392,21 @@ public class Main implements ApplicationListener {
         treeX3=treeX-treeWidth;
         treeX2 += treeSpeed *delta;
         treeY -= treeSpeed * delta;
+
+        if (treeY + (TreeTexture.getHeight())*scale2< viewport.getWorldHeight()/2 || flag==1) {
+            treeX4 -= treeSpeed * delta;
+            treeX6 = treeX - treeWidth;
+            treeX5 += treeSpeed * delta;
+            treeY2 -= treeSpeed * delta;
+        }
+        flag2=1;
         if (treeSprite != null) {
             treeSprite.setPosition(treeX3, treeY);
             treeSprite.setSize(treeWidth, treeHeight);
             treeSprite.draw(spriteBatch);
         }
 
-// Only draw treeSprite2 if it's not null
-        if (treeSprite4 != null) {
-            treeSprite4.setPosition(treeX2, treeY);
-            treeSprite4.setSize(treeWidth, treeHeight);
-            treeSprite4.draw(spriteBatch);
-        }
-        if (treeSprite3 != null) {
-            treeSprite3.setPosition(treeX3, treeY);
-            treeSprite3.setSize(treeWidth, treeHeight);
-            treeSprite3.draw(spriteBatch);
-        }
+
 
 // Only draw treeSprite2 if it's not null
         if (treeSprite2 != null) {
