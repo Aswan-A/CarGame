@@ -62,15 +62,10 @@ public class Main implements ApplicationListener {
     Texture TreeTexture2;
     Sprite buildingSprite;
     Sprite TreeSprite;
-    private float treeX3;
+    float treeX3;
+    float treeX3Y;
     Texture BuildTexture;
     private Sprite BuildSprite;
-    private Sprite treeSprite3;
-    private Sprite treeSprite4;
-    private float treeX4;
-    private float treeX5;
-    private float treeX6;
-    private float treeY2;
     private int flag2=0;
 
     enum GameState {
@@ -83,13 +78,15 @@ public class Main implements ApplicationListener {
     int flag=0;
     float treeY;
     float treeX;
+    float treeXY;
     float treeX2;
+    float treeX2Y;
     float treeSpeed;
     float scale2;
 
     @Override
     public void create() {
-        backgroundTexture = new Texture("578f6fba-fc0d-451f-8f90-535a1820a116.png");
+        backgroundTexture = new Texture("Slide 16_9 - 1.png");
         PlayerCarTexture = new Texture("pop.png");
         buildingTexture=new Texture ("Building.png");
         BuildTexture=new Texture("Build3.png");
@@ -141,17 +138,14 @@ public class Main implements ApplicationListener {
         shadowSpeed = 4f;  // Speed of the shadow movement (in pixels per second)
         u=1;
         buildingSprite = new Sprite(buildingTexture);
-        treeY = viewport.getWorldHeight()*15/32;
-        treeX = viewport.getWorldWidth()/2;
-        treeX3= viewport.getWorldWidth()/2;
-        treeX2 = viewport.getWorldWidth()/2;
-
-        treeY2 = viewport.getWorldHeight()*15/32;
-        treeX4= viewport.getWorldWidth()/2;
-        treeX5=viewport.getWorldWidth()/2;
-        treeX6=viewport.getWorldWidth()/2;
-        treeSpeed = 2f;  // Adjust the speed as necessary
-        scale2 = 0.0f;
+        treeY = viewport.getWorldHeight()/2;
+        treeX = viewport.getWorldWidth()/4;
+        treeXY=treeX;
+        treeX3Y=treeX;
+        treeX2 = 6*viewport.getWorldWidth()/10;
+        treeX2Y=treeX2;
+        treeSpeed = 1f;  // Adjust the speed as necessary
+        scale2 = 1f;
     }
 
     @Override
@@ -369,14 +363,14 @@ public class Main implements ApplicationListener {
 
 
 // Check if the tree is outside the bottom of the screen
-        if (treeY + (TreeTexture.getHeight())*scale2< 0) {
+        if (treeY + (TreeTexture.getHeight())*scale2< 0 || treeX2 + (TreeTexture.getHeight())*scale2> viewport.getWorldWidth()) {
             // Reset the tree's position to the top
             treeSprite = createtree();  // Create a new sprite when the tree goes off screen
             treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
-            treeY = viewport.getWorldHeight()*15/32;
-            treeX= viewport.getWorldWidth()/2;
-            treeX2= viewport.getWorldWidth()/2;
-            treeX3= viewport.getWorldWidth()/2;
+            treeY = viewport.getWorldHeight()/2;
+            treeX= viewport.getWorldWidth()/4;
+            treeX2= 6*viewport.getWorldWidth()/10;
+            treeX3= viewport.getWorldWidth()/5;
             scale2=0;
         }
 
@@ -388,23 +382,25 @@ public class Main implements ApplicationListener {
 
         float treeWidth = TreeTexture.getWidth() * scale2;
         float treeHeight = TreeTexture.getHeight() * scale2;
-        treeX -= treeSpeed *delta;
-        treeX3=treeX-treeWidth;
-        treeX2 += treeSpeed *delta;
         treeY -= treeSpeed * delta;
+        float width = viewport.getWorldWidth()/2;
+        System.out.println(treeX+"         ");
 
-        if (treeY + (TreeTexture.getHeight())*scale2< viewport.getWorldHeight()/2 || flag==1) {
-            treeX4 -= treeSpeed * delta;
-            treeX6 = treeX - treeWidth;
-            treeX5 += treeSpeed * delta;
-            treeY2 -= treeSpeed * delta;
-        }
-        flag2=1;
+        treeX =(((treeY-((viewport.getWorldHeight()/2)+5))*-((width)-(treeXY))/((-5)))+(width));
+
+//       System.out.println(treeY);
+
+        treeX2 =((treeY-((viewport.getWorldHeight()/2)+5))*((treeX2Y)-(width))/((-5)))+(width);
+
+        treeX3=treeX-treeWidth;
+//        System.out.println(treeY);
+ //       System.out.println(viewport.getWorldHeight());
+
         if (treeSprite != null) {
             treeSprite.setPosition(treeX3, treeY);
-            treeSprite.setSize(treeWidth, treeHeight);
-            treeSprite.draw(spriteBatch);
-        }
+           treeSprite.setSize(treeWidth, treeHeight);
+           treeSprite.draw(spriteBatch);
+    }
 
 
 
@@ -443,7 +439,7 @@ public class Main implements ApplicationListener {
         float treeHeight = TreeTexture.getHeight();
 
         // Randomly decide whether to create a tree or a building sprite
-        int randomChoice = MathUtils.random(3);  // 0 for tree, 1 for building
+        int randomChoice = MathUtils.random(1);  // 0 for tree, 1 for building
 
         Sprite newSprite = null;
         if (randomChoice == 0) {
