@@ -21,7 +21,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 
 public class Main implements ApplicationListener {
@@ -67,6 +66,10 @@ public class Main implements ApplicationListener {
     Texture BuildTexture;
     private Sprite BuildSprite;
     private int flag2=0;
+    private float[] treePositions;
+    private int treeIndex;
+    private float[] treePositions2;
+    private int treeIndex2;
 
     enum GameState {
         RUNNING, PAUSED, GAMEOVER,MAINMENU
@@ -139,10 +142,15 @@ public class Main implements ApplicationListener {
         u=1;
         buildingSprite = new Sprite(buildingTexture);
         treeY = viewport.getWorldHeight()/2;
-        treeX = viewport.getWorldWidth()/4;
+        //        System.out.println(viewport.getWorldWidth());
+        treePositions = new float[]{4f,8f,12f,17.5f};
+        treeIndex = MathUtils.random(0, treePositions.length - 1);
+        treeX = treePositions[treeIndex];
         treeXY=treeX;
         treeX3Y=treeX;
-        treeX2 = 6*viewport.getWorldWidth()/10;
+        treePositions2 = new float[]{20f,24f,28f,32.5f};
+        treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
+        treeX2 = treePositions2[treeIndex2];
         treeX2Y=treeX2;
         treeSpeed = 1f;  // Adjust the speed as necessary
         scale2 = 1f;
@@ -363,28 +371,33 @@ public class Main implements ApplicationListener {
 
 
 // Check if the tree is outside the bottom of the screen
-        if (treeY + (TreeTexture.getHeight())*scale2< 0 || treeX2 + (TreeTexture.getHeight())*scale2> viewport.getWorldWidth()) {
+        if (treeY + (TreeTexture.getHeight())*scale2< 0 || (treeX2 > viewport.getWorldWidth() && treeX3 < 0)){
             // Reset the tree's position to the top
             treeSprite = createtree();  // Create a new sprite when the tree goes off screen
             treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
             treeY = viewport.getWorldHeight()/2;
-            treeX= viewport.getWorldWidth()/4;
-            treeX2= 6*viewport.getWorldWidth()/10;
+            treePositions = new float[]{4f,8f,12f,17.5f};
+            treeIndex = MathUtils.random(0, treePositions.length - 1);
+            treeX = treePositions[treeIndex];
+            treeXY=treeX;
+            treePositions2 = new float[]{20f,24f,28f,32.5f};
+            treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
+            treeX2= treePositions2[treeIndex2];
+            treeX2Y=treeX2;
             treeX3= viewport.getWorldWidth()/5;
             scale2=0;
         }
+//        System.out.println(treeX+"    hi     ");
 
 
 // Draw the tree texture at its current position
-        if (scale2 < 0.018f) {
             scale2 += 0.00003f;
-        }
 
         float treeWidth = TreeTexture.getWidth() * scale2;
         float treeHeight = TreeTexture.getHeight() * scale2;
         treeY -= treeSpeed * delta;
         float width = viewport.getWorldWidth()/2;
-        System.out.println(treeX+"         ");
+
 
         treeX =(((treeY-((viewport.getWorldHeight()/2)+5))*-((width)-(treeXY))/((-5)))+(width));
 
