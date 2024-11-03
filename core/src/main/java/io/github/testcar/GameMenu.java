@@ -30,6 +30,7 @@ public class GameMenu implements Screen {
     private ImageButton button2;
     private ImageButton button3;
     private Texture selectedCarTexture;
+    private Texture ExitbuttonTexture;
 
 
     public GameMenu(SpriteBatch batch, Texture selectedCarTexture) {
@@ -59,7 +60,6 @@ public class GameMenu implements Screen {
         TextureRegion buttonRegion = new TextureRegion(playbuttonTexture);
         TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
         button1 = new ImageButton(buttonDrawable);
-        button1.setSize(800, 400);
         button1.setPosition(960, 540);
 
         button1.addListener(new ClickListener() {
@@ -72,11 +72,10 @@ public class GameMenu implements Screen {
 
         });
 
-        StorebuttonTexture = new Texture("Exitbutton.png");
-        TextureRegion buttonRegion2 = new TextureRegion(StorebuttonTexture);
+        ExitbuttonTexture = new Texture("Exitbutton.png");
+        TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
         TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
         button2 = new ImageButton(buttonDrawable2);
-        button2.setSize(800, 400);
         button2.setPosition(960, 300);
 
         button2.addListener(new ClickListener() {
@@ -88,12 +87,11 @@ public class GameMenu implements Screen {
 
         });
 
-        StorebuttonTexture = new Texture("Exitbutton.png");
+        StorebuttonTexture = new Texture("StoreButton.png");
         TextureRegion buttonRegion3 = new TextureRegion(StorebuttonTexture);
         TextureRegionDrawable buttonDrawable3 = new TextureRegionDrawable(buttonRegion3);
-        button3 = new ImageButton(buttonDrawable2);
-        button3.setSize(800, 400);
-        button3.setPosition(960, 200);
+        button3 = new ImageButton(buttonDrawable3);
+        button3.setPosition(960, 150);
 
         button3.addListener(new ClickListener() {
             @Override
