@@ -186,7 +186,7 @@ public class GameScreen implements Screen {
             shadowSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
             shadowSprite2.setY(0);
             PlayerCarSprite = new Sprite(PlayerCarTexture);
-            PlayerCarSprite.setSize(3, 3);
+            PlayerCarSprite.setSize(5, 5);
             BuildSprite=new Sprite(BuildTexture);
             treeSprite = new Sprite(TreeTexture);
             treeSprite.setOrigin(TreeTexture.getWidth(),0);
