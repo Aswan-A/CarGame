@@ -3,10 +3,12 @@ package io.github.testcar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -23,20 +25,28 @@ public class PauseScreen implements Screen {
     private Stage stage;
     private Texture backgroundTexture;
     private Sprite backgroundSprite;
-
-    PauseScreen(SpriteBatch batch, GameScreen gameScreen) {
+    private Texture blurredBackgroundTexture;
+    private ShaderProgram blurShader;
+    public PauseScreen(SpriteBatch batch, GameScreen gameScreen) {
         this.batch = batch;
-        this.gameScreen = gameScreen; // Store the reference
+        this.gameScreen = gameScreen;
         initializeViewport();
         create();
         setupStage();
-        draw();
+
+        // Capture and blur the game screen
+        blurredBackgroundTexture = gameScreen.captureScreen();
+        initializeBlurShader();
     }
 
     public void create() {
-        backgroundTexture = new Texture("WhatsApp Image 2024-10-15 at 19.49.58_41e090b8.jpg");
+        backgroundTexture = new Texture("PauseScreenBackground.jpg");
         backgroundSprite = new Sprite(backgroundTexture);
-        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+        backgroundSprite.setSize(viewport.getWorldWidth()/2, 3*viewport.getWorldHeight()/4);
+        backgroundSprite.setX(viewport.getWorldWidth()/4);
+        backgroundSprite.setY(viewport.getWorldHeight()/8);
+        blurShader = new ShaderProgram(Gdx.files.internal("blur_vertex.glsl"), Gdx.files.internal("blur_fragment.glsl"));
+
     }
 
     private void setupStage() {
@@ -86,18 +96,32 @@ public class PauseScreen implements Screen {
 
     }
 
+
+    // Initialize the blur shader
+    private void initializeBlurShader() {
+        blurShader = new ShaderProgram(Gdx.files.internal("blur_vertex.glsl"), Gdx.files.internal("blur_fragment.glsl"));
+        if (!blurShader.isCompiled()) {
+            System.err.println("Shader compilation failed: " + blurShader.getLog());
+        }
+    }
+
+    // Render method in PauseScreen to draw the blurred background
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK); // Clear the screen to black
-        viewport.apply(); // Apply the viewport settings
+        viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
         batch.begin();
-        backgroundSprite.draw(batch); // Draw the background sprite
+        batch.setShader(blurShader); // Apply the blur shader
+        blurShader.setUniformf("blurSize", 1f / Gdx.graphics.getWidth()); // Adjust blur size
+        batch.draw(blurredBackgroundTexture, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+        batch.setShader(null); // Reset shader after drawing background
+        backgroundSprite.draw(batch);
         batch.end();
 
         stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw(); // Draw the stage (which includes the button)
+        stage.draw();
     }
 
     @Override

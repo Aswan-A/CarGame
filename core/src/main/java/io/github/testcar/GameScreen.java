@@ -4,11 +4,13 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -73,6 +76,7 @@ public class GameScreen implements Screen {
     private Stage stage;
     float delta = Gdx.graphics.getDeltaTime();
     private boolean isPaused;
+    private FrameBuffer frameBuffer;
 
     GameScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -125,7 +129,14 @@ public class GameScreen implements Screen {
         viewport = new FitViewport(35, 20);
     }
 
-
+    public Texture captureScreen() {
+        byte[] pixels = ScreenUtils.getFrameBufferPixels(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        Pixmap pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
+        BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return texture;
+    }
 
 
     enum GameState {

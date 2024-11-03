@@ -41,7 +41,7 @@ public class GameMenu implements Screen {
     }
 
     private void create() {
-        backgroundTexture = new Texture("Slide 16_9 - 1.png");
+        backgroundTexture = new Texture("GameBackground.jpg");
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
     }
@@ -88,9 +88,6 @@ public class GameMenu implements Screen {
         stage.addActor(button2);// Add button to the stage
 
     }
-
-
-
 
     @Override
     public void show() {
