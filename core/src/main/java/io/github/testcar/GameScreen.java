@@ -77,9 +77,10 @@ public class GameScreen implements Screen {
     float delta = Gdx.graphics.getDeltaTime();
     private boolean isPaused;
     private FrameBuffer frameBuffer;
-
-    GameScreen(SpriteBatch batch) {
+    Texture selectedCarTexture;
+    GameScreen(SpriteBatch batch, Texture selectedCarTexture) {
         this.batch = batch;
+        this.selectedCarTexture=selectedCarTexture;
         create();  // Call create to initialize resources
         initializeViewport(); // Call this to ensure viewport is set up
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
@@ -157,7 +158,11 @@ public class GameScreen implements Screen {
 
         public void create() {
             backgroundTexture = new Texture("Slide 16_9 - 1.png");
-            PlayerCarTexture = new Texture("pop.png");
+            if(selectedCarTexture!=null){
+                PlayerCarTexture =selectedCarTexture;
+            }else{
+                PlayerCarTexture=new Texture ("pop.png");
+            }
             buildingTexture=new Texture ("Building.png");
             BuildTexture=new Texture("Build3.png");
             TreeTexture=new Texture("Tree.png");

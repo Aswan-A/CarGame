@@ -26,14 +26,18 @@ public class GameMenu implements Screen {
     private Texture playbuttonTexture;
     private ImageButton button1;
     private Screen screen;
-    private Texture ExitbuttonTexture;
+    private Texture StorebuttonTexture;
     private ImageButton button2;
+    private ImageButton button3;
+    private Texture selectedCarTexture;
 
-    public GameMenu(SpriteBatch batch) {
+
+    public GameMenu(SpriteBatch batch, Texture selectedCarTexture) {
         this.batch = batch;
         initializeViewport(); // Call this to ensure viewport is set up
         create();  // Call create to initialize resources
         setupStage(); // Setup the stage and buttons
+        this.selectedCarTexture=selectedCarTexture;
     }
 
     private void initializeViewport() {
@@ -63,13 +67,13 @@ public class GameMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Start Game Button Clicked!");
                 Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
-                game.setScreen(new GameScreen(batch)); // Switch to GameScreen
+                game.setScreen(new GameScreen(batch,selectedCarTexture)); // Switch to GameScreen
             }
 
         });
 
-        ExitbuttonTexture = new Texture("Exitbutton.png");
-        TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
+        StorebuttonTexture = new Texture("Exitbutton.png");
+        TextureRegion buttonRegion2 = new TextureRegion(StorebuttonTexture);
         TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
         button2 = new ImageButton(buttonDrawable2);
         button2.setSize(800, 400);
@@ -84,8 +88,26 @@ public class GameMenu implements Screen {
 
         });
 
+        StorebuttonTexture = new Texture("Exitbutton.png");
+        TextureRegion buttonRegion3 = new TextureRegion(StorebuttonTexture);
+        TextureRegionDrawable buttonDrawable3 = new TextureRegionDrawable(buttonRegion3);
+        button3 = new ImageButton(buttonDrawable2);
+        button3.setSize(800, 400);
+        button3.setPosition(960, 200);
+
+        button3.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Store!");
+                Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
+                game.setScreen(new StoreScreen(batch)); // Switch to GameScreen
+            }
+
+        });
+
         stage.addActor(button1);// Add button to the stage
         stage.addActor(button2);// Add button to the stage
+        stage.addActor(button3);// Add button to the stage
 
     }
 
