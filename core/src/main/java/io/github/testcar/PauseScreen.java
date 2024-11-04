@@ -3,7 +3,6 @@ package io.github.testcar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -72,7 +71,24 @@ public class PauseScreen implements Screen {
 //                System.out.println("qwerty");
             }
         });
+
+        Texture ExitbuttonTexture = new Texture("Exitbutton.png");
+        TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
+        TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
+        ImageButton button2 = new ImageButton(buttonDrawable2);
+        button2.setSize(10, 7);
+        button2.setPosition(15, 0);
+
+        button2.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Quit Button Clicked!");
+                System.exit(-1);
+            }
+        });
         stage.addActor(button1); // Add button to the stage
+        stage.addActor(button2); // Add button to the stage
+
     }
 
     private void initializeViewport() {

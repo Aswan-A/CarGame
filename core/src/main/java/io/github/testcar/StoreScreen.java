@@ -25,6 +25,12 @@ public class StoreScreen implements Screen {
     private String selectedCar = "Car 1"; // Default selected car
     private Table carTable;
     private Sprite backgroundSprite;
+    private Texture car3Texture;
+    private Texture car4Texture;
+    private Texture car5Texture;
+    private Texture car6Texture;
+    private Texture car7Texture;
+    private Texture car8Texture;
 
     public StoreScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -33,16 +39,26 @@ public class StoreScreen implements Screen {
     }
 
     private void create() {
-        backgroundTexture = new Texture("StoreScreenBackground.jpg");
+        backgroundTexture = new Texture("StoreScreenBackground.png");
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight() );
+        carTable.add(createSelectButton()).colspan(2).center().pad(10);
+        carTable.row();
 
         // Arrange the layout
-        carTable.add(createCarButton(car1Texture, "Car 1A")).pad(10);
-        carTable.add(createCarButton(car2Texture, "Car 2A")).pad(10);
-        carTable.row();
-        carTable.add(createSelectButton()).colspan(2).center().pad(10);
+        carTable.add(createCarButton(car1Texture, "Car 1A")).pad(200,10,20,10);
+        carTable.add(createCarButton(car2Texture, "Car 2A")).pad(200,10,20,10);
+        carTable.add(createCarButton(car3Texture, "Car 3A")).pad(200,10,20,10);
+        carTable.add(createCarButton(car4Texture, "Car 4A")).pad(200,10,20,10);
 
+        carTable.row();
+
+        carTable.add(createCarButton(car5Texture, "Car 5A")).pad(10);
+        carTable.add(createCarButton(car6Texture, "Car 6A")).pad(10);
+        carTable.add(createCarButton(car7Texture, "Car 7A")).pad(10);
+        carTable.add(createCarButton(car8Texture, "Car 8A")).pad(10);
+
+        carTable.row();
         stage.addActor(carTable); // Add the table to the stage
     }
 
@@ -54,6 +70,12 @@ public class StoreScreen implements Screen {
         // Load textures for car selection
         car1Texture = new Texture("car1A.png");
         car2Texture = new Texture("car2A.png");
+        car3Texture = new Texture("car3A.png");
+        car4Texture = new Texture("car4A.png");
+        car5Texture = new Texture("car5A.png");
+        car6Texture = new Texture("car6A.png");
+        car7Texture = new Texture("car7A.png");
+        car8Texture = new Texture("car8A.png");
         selectedCarTexture = car1Texture; // Default selected car
 
         // Load the skin for UI elements
@@ -127,6 +149,12 @@ public class StoreScreen implements Screen {
         stage.dispose();
         car1Texture.dispose();
         car2Texture.dispose();
+        car3Texture.dispose();
+        car4Texture.dispose();
+        car5Texture.dispose();
+        car6Texture.dispose();
+        car7Texture.dispose();
+        car8Texture.dispose();
         skin.dispose();
         backgroundTexture.dispose(); // Dispose the background texture as well
     }
