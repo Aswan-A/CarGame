@@ -56,7 +56,7 @@ public class GameMenu implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // Play button texture
-        playbuttonTexture = new Texture("play-button.png");
+        playbuttonTexture = new Texture("Startbutton.png");
         int height=playbuttonTexture.getHeight();
         int width=playbuttonTexture.getWidth();
 
@@ -77,7 +77,7 @@ public class GameMenu implements Screen {
 
         });
 
-        ExitbuttonTexture = new Texture("Exitbutton.png");
+        ExitbuttonTexture = new Texture("Quitbutton.png");
         int height2=ExitbuttonTexture.getHeight();
         int width2=ExitbuttonTexture.getWidth();
         TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);

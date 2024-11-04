@@ -79,7 +79,7 @@ public class PauseScreen implements Screen {
             }
         });
 
-        Texture ExitbuttonTexture = new Texture("Quitbutton.png");
+        Texture ExitbuttonTexture = new Texture("Exitbutton.png");
         TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
         TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
         ImageButton button2 = new ImageButton(buttonDrawable2);

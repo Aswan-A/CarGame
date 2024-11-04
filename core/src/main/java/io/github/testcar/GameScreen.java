@@ -107,8 +107,8 @@ public class GameScreen implements Screen {
         TextureRegion buttonRegion = new TextureRegion(PausebuttonTexture);
         TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
         button1 = new ImageButton(buttonDrawable);
-        button1.setSize(5, 3);
-        button1.setPosition(29, 18);
+        button1.setSize(2, 2);
+        button1.setPosition(32, 17);
 
         button1.addListener(new ClickListener() {
             @Override
@@ -227,9 +227,9 @@ public class GameScreen implements Screen {
             treeSpeed = 1f;  // Adjust the speed as necessary
             scale2 = 1f;
 
-            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
-            Thread headTiltThread = new Thread(headTiltDetector);
-            headTiltThread.start();
+//            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
+//            Thread headTiltThread = new Thread(headTiltDetector);
+//            headTiltThread.start();
         }
 
     @Override
@@ -297,18 +297,18 @@ public class GameScreen implements Screen {
             float speed = 12f;
             float delta = Gdx.graphics.getDeltaTime();
 
-            int steer =HeadTiltDetector.getSteeringDirection();
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)||steer==1) {
+//            int steer =HeadTiltDetector.getSteeringDirection();
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
                 PlayerCarSprite.translateX(speed * delta);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)||steer==-1) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
                 PlayerCarSprite.translateX(-speed * delta);
             }
 
-            if (Gdx.input.isTouched()) {
-                touchPos.set(Gdx.input.getX(), Gdx.input.getY());
-                viewport.unproject(touchPos);
-                PlayerCarSprite.setCenterX(touchPos.x);
-            }
+//            if (Gdx.input.isTouched()) {
+//                touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+//                viewport.unproject(touchPos);
+//                PlayerCarSprite.setCenterX(touchPos.x);
+//            }
         }
 
         private void logic() {
@@ -356,10 +356,10 @@ public class GameScreen implements Screen {
             batch.setColor(1f, 1f, 1f, 1f);
             // Update the tree's position (moving it downwards)
 
-
+System.out.println((treeY + 3));
 
 // Check if the tree is outside the bottom of the screen
-            if (treeY + (TreeTexture.getHeight())*scale2< 0 || (treeX2 > viewport.getWorldWidth() && treeX3+TreeTexture.getWidth() < 0)){
+            if (((treeY + 5)< 0) || ((treeX2 > 38 && treeX3+14 < 0))){
                 // Reset the tree's position to the top
                 treeSprite = createtree();  // Create a new sprite when the tree goes off screen
                 treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
@@ -394,7 +394,7 @@ public class GameScreen implements Screen {
             treeX2 =((treeY-((viewport.getWorldHeight()/2)+9))*((treeX2Y)-(width))/((-5)))+(width);
 
             treeX3=treeX-treeWidth;
-                   System.out.println(treeY);
+//                  System.out.println(treeY);
             //       System.out.println(viewport.getWorldHeight());
 
             if (treeSprite != null) {
