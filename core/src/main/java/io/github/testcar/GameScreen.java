@@ -225,6 +225,10 @@ public class GameScreen implements Screen {
             treeX2Y=treeX2;
             treeSpeed = 1f;  // Adjust the speed as necessary
             scale2 = 1f;
+
+            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
+            Thread headTiltThread = new Thread(headTiltDetector);
+            headTiltThread.start();
         }
 
     @Override
@@ -290,12 +294,12 @@ public class GameScreen implements Screen {
             float speed = 12f;
             float delta = Gdx.graphics.getDeltaTime();
 
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            int steer =HeadTiltDetector.getSteeringDirection();
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)||steer==1) {
                 PlayerCarSprite.translateX(speed * delta);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)||steer==-1) {
                 PlayerCarSprite.translateX(-speed * delta);
             }
-
 
             if (Gdx.input.isTouched()) {
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY());
