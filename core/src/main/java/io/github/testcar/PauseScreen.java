@@ -2,6 +2,7 @@ package io.github.testcar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+
 public class PauseScreen implements Screen {
 
     private final SpriteBatch batch;
@@ -26,9 +28,13 @@ public class PauseScreen implements Screen {
     private Sprite backgroundSprite;
     private Texture blurredBackgroundTexture;
     private ShaderProgram blurShader;
-    public PauseScreen(SpriteBatch batch, GameScreen gameScreen) {
+    private Texture selectedCarTexture;
+    private Music music;
+    public PauseScreen(SpriteBatch batch, GameScreen gameScreen, Texture selectedCarTexture, Music music) {
         this.batch = batch;
         this.gameScreen = gameScreen;
+        this.music=music;
+        this.selectedCarTexture=selectedCarTexture;
         initializeViewport();
         create();
         setupStage();
@@ -58,13 +64,14 @@ public class PauseScreen implements Screen {
         TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
         ImageButton button1 = new ImageButton(buttonDrawable);
         button1.setSize(10, 7);
-        button1.setPosition(15, 5);
+        button1.setPosition(12, 9);
 
         button1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Resume Button Clicked!");
                 gameScreen.resumeGame(); // Call resumeGame on the existing GameScreen instance
+                gameScreen.playmusic();
                 Main game = (Main) Gdx.app.getApplicationListener();
                 dispose(); // Dispose of the PauseScreen instance
                 game.setScreen(gameScreen); // Switch back to GameScreen without creating a new instance
@@ -72,24 +79,27 @@ public class PauseScreen implements Screen {
             }
         });
 
-        Texture ExitbuttonTexture = new Texture("Exitbutton.png");
+        Texture ExitbuttonTexture = new Texture("Quitbutton.png");
         TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
         TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
         ImageButton button2 = new ImageButton(buttonDrawable2);
         button2.setSize(10, 7);
-        button2.setPosition(15, 0);
+        button2.setPosition(12, 4);
 
         button2.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Button Clicked!");
-                System.exit(-1);
+                dispose(); // Dispose of the PauseScreen instance
+                Main game = (Main) Gdx.app.getApplicationListener();
+                game.setScreen(new GameMenu(batch, selectedCarTexture)); // Navigate to GameMenu
             }
-        });
+        }); // Closing bracket added
+
         stage.addActor(button1); // Add button to the stage
         stage.addActor(button2); // Add button to the stage
 
-    }
+        }
 
     private void initializeViewport() {
         // Initialize the viewport here to ensure it is ready before resize calls

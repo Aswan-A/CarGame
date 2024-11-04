@@ -107,8 +107,8 @@ public class GameScreen implements Screen {
         TextureRegion buttonRegion = new TextureRegion(PausebuttonTexture);
         TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
         button1 = new ImageButton(buttonDrawable);
-        button1.setSize(10, 7);
-        button1.setPosition(10, 5);
+        button1.setSize(5, 3);
+        button1.setPosition(29, 18);
 
         button1.addListener(new ClickListener() {
             @Override
@@ -116,8 +116,9 @@ public class GameScreen implements Screen {
 
                 System.out.println("Pause Button Clicked!");
                 pauseGame();
+                music.pause();
                 Main game = (Main) Gdx.app.getApplicationListener();
-                game.setScreen(new PauseScreen(batch, GameScreen.this)); // Pass the current GameScreen instance
+                game.setScreen(new PauseScreen(batch, GameScreen.this,selectedCarTexture,music)); // Pass the current GameScreen instance
                 isPaused=true;
 //                System.out.println("asd");
             }
@@ -157,7 +158,7 @@ public class GameScreen implements Screen {
         float scale2;
 
         public void create() {
-            backgroundTexture = new Texture("Slide 16_9 - 1.png");
+            backgroundTexture = new Texture("Adish.png");
             if(selectedCarTexture!=null){
                 PlayerCarTexture =selectedCarTexture;
             }else{
@@ -197,7 +198,7 @@ public class GameScreen implements Screen {
             PlayerCarRectangle = new Rectangle();
             dropRectangle = new Rectangle();
             music.setLooping(true);
-            music.setVolume(2f);
+            music.setVolume(0f);
             music.play();
             score = 0;
             Score=" 0";
@@ -212,8 +213,8 @@ public class GameScreen implements Screen {
             shadowSpeed = 4f;  // Speed of the shadow movement (in pixels per second)
             u=1;
             buildingSprite = new Sprite(buildingTexture);
-            treeY = viewport.getWorldHeight()/2;
-            //        System.out.println(viewport.getWorldWidth());
+            treeY = 13.31f;
+//                    System.out.println(viewport.getWorldWidth());
             treePositions = new float[]{4f,8f,12f,17.5f};
             treeIndex = MathUtils.random(0, treePositions.length - 1);
             treeX = treePositions[treeIndex];
@@ -239,7 +240,9 @@ public class GameScreen implements Screen {
     public void resumeGame() {
         isPaused = false; // Set the pause flag to false
     }
-
+    public void playmusic(){
+             music.play();
+    }
     public void pauseGame() {
         isPaused = true; // Set the pause flag to true
     }
@@ -356,16 +359,16 @@ public class GameScreen implements Screen {
 
 
 // Check if the tree is outside the bottom of the screen
-            if (treeY + (TreeTexture.getHeight())*scale2< 0 || (treeX2 > viewport.getWorldWidth() && treeX3 < 0)){
+            if (treeY + (TreeTexture.getHeight())*scale2< 0 || (treeX2 > viewport.getWorldWidth() && treeX3+TreeTexture.getWidth() < 0)){
                 // Reset the tree's position to the top
                 treeSprite = createtree();  // Create a new sprite when the tree goes off screen
                 treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
-                treeY = viewport.getWorldHeight()/2;
-                treePositions = new float[]{4f,8f,12f,17.5f};
+                treeY =13.3f;
+                treePositions = new float[]{4f,8f,12f,14f};
                 treeIndex = MathUtils.random(0, treePositions.length - 1);
                 treeX = treePositions[treeIndex];
                 treeXY=treeX;
-                treePositions2 = new float[]{20f,24f,28f,32.5f};
+                treePositions2 = new float[]{21f,24f,28f,32.5f};
                 treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
                 treeX2= treePositions2[treeIndex2];
                 treeX2Y=treeX2;
@@ -384,14 +387,14 @@ public class GameScreen implements Screen {
             float width = viewport.getWorldWidth()/2;
 
 
-            treeX =(((treeY-((viewport.getWorldHeight()/2)+5))*-((width)-(treeXY))/((-5)))+(width));
+            treeX =(((treeY-((viewport.getWorldHeight()/2)+9))*-((width)-(treeXY))/((-5)))+(width));
+//            System.out.println(viewport.getWorldWidth()/4);
+                //   System.out.println(treeX2);
 
-//       System.out.println(treeY);
-
-            treeX2 =((treeY-((viewport.getWorldHeight()/2)+5))*((treeX2Y)-(width))/((-5)))+(width);
+            treeX2 =((treeY-((viewport.getWorldHeight()/2)+9))*((treeX2Y)-(width))/((-5)))+(width);
 
             treeX3=treeX-treeWidth;
-//        System.out.println(treeY);
+                   System.out.println(treeY);
             //       System.out.println(viewport.getWorldHeight());
 
             if (treeSprite != null) {

@@ -57,10 +57,15 @@ public class GameMenu implements Screen {
 
         // Play button texture
         playbuttonTexture = new Texture("play-button.png");
+        int height=playbuttonTexture.getHeight();
+        int width=playbuttonTexture.getWidth();
+
         TextureRegion buttonRegion = new TextureRegion(playbuttonTexture);
         TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
         button1 = new ImageButton(buttonDrawable);
-        button1.setPosition(960, 540);
+        System.out.println(width+" "+height);
+        button1.setPosition(960-((float) width /2), 810-((float) height /2));
+        System.out.println(viewport.getWorldHeight());
 
         button1.addListener(new ClickListener() {
             @Override
@@ -73,10 +78,12 @@ public class GameMenu implements Screen {
         });
 
         ExitbuttonTexture = new Texture("Exitbutton.png");
+        int height2=ExitbuttonTexture.getHeight();
+        int width2=ExitbuttonTexture.getWidth();
         TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
         TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
         button2 = new ImageButton(buttonDrawable2);
-        button2.setPosition(960, 300);
+        button2.setPosition(960-((float) width2 /2), 540-((float) height2 /2));
 
         button2.addListener(new ClickListener() {
             @Override
@@ -87,11 +94,13 @@ public class GameMenu implements Screen {
 
         });
 
-        StorebuttonTexture = new Texture("StoreButton.png");
+        StorebuttonTexture = new Texture("GarageButton.png");
+        int height3=StorebuttonTexture.getHeight();
+        int width3=StorebuttonTexture.getWidth();
         TextureRegion buttonRegion3 = new TextureRegion(StorebuttonTexture);
         TextureRegionDrawable buttonDrawable3 = new TextureRegionDrawable(buttonRegion3);
         button3 = new ImageButton(buttonDrawable3);
-        button3.setPosition(960, 150);
+        button3.setPosition(960-((float) width3 /2), 270-((float) height3 /2));
 
         button3.addListener(new ClickListener() {
             @Override

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -31,6 +32,9 @@ public class StoreScreen implements Screen {
     private Texture car6Texture;
     private Texture car7Texture;
     private Texture car8Texture;
+    private ImageButton selectButton;
+    // Play button texture
+    Texture selectButtonTexture = new Texture("Selectbutton.png");
 
     public StoreScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -39,10 +43,9 @@ public class StoreScreen implements Screen {
     }
 
     private void create() {
-        backgroundTexture = new Texture("StoreScreenBackground.png");
+        backgroundTexture = new Texture("popo.png");
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight() );
-        carTable.add(createSelectButton()).colspan(2).center().pad(10);
         carTable.row();
 
         // Arrange the layout
@@ -59,7 +62,9 @@ public class StoreScreen implements Screen {
         carTable.add(createCarButton(car8Texture, "Car 8A")).pad(10);
 
         carTable.row();
+        stage.addActor(createSelectButton()); // Add button to the stage
         stage.addActor(carTable); // Add the table to the stage
+
     }
 
     private void initialize() {
@@ -100,7 +105,11 @@ public class StoreScreen implements Screen {
     }
 
     private ImageButton createSelectButton() {
-        ImageButton selectButton = new ImageButton(skin);
+        TextureRegion buttonRegion = new TextureRegion(selectButtonTexture);
+        TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
+        selectButton = new ImageButton(buttonDrawable); // Use the class variable
+        selectButton.setPosition(350, 403);
+        selectButton.setSize(100,87);
         selectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -111,6 +120,7 @@ public class StoreScreen implements Screen {
         });
         return selectButton;
     }
+
 
     @Override
     public void render(float delta) {
