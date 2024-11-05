@@ -24,6 +24,8 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import java.awt.image.BufferedImage;
+
 public class GameScreen implements Screen {
     Texture backgroundTexture;
         Texture PlayerCarTexture;
@@ -115,6 +117,7 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
 
                 System.out.println("Pause Button Clicked!");
+                HeadTiltDetector.stop();
                 pauseGame();
                 music.pause();
                 Main game = (Main) Gdx.app.getApplicationListener();
@@ -158,6 +161,9 @@ public class GameScreen implements Screen {
         float scale2;
 
         public void create() {
+
+
+
             backgroundTexture = new Texture("Adish.png");
             if(selectedCarTexture!=null){
                 PlayerCarTexture =selectedCarTexture;
@@ -205,7 +211,7 @@ public class GameScreen implements Screen {
             score = 0;
             Score=" 0";
             yourfont=new BitmapFont();
-            yourfont.getData().setScale(0.1f, 0.1f);
+            yourfont.getData().setScale(0.01f, 0.01f);
             preferences = Gdx.app.getPreferences("MyGamePreferences");
             highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
             shadowSprite.setPosition(0, 0);
@@ -229,9 +235,9 @@ public class GameScreen implements Screen {
             treeSpeed = 1f;  // Adjust the speed as necessary
             scale2 = 1f;
 
-//            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
-//            Thread headTiltThread = new Thread(headTiltDetector);
-//            headTiltThread.start();
+            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
+            Thread headTiltThread = new Thread(headTiltDetector);
+            headTiltThread.start();
         }
 
     @Override
@@ -302,10 +308,10 @@ public class GameScreen implements Screen {
             float speed = 12f;
             float delta = Gdx.graphics.getDeltaTime();
 
-//            int steer =HeadTiltDetector.getSteeringDirection();
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            int steer =HeadTiltDetector.getSteeringDirection();
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)||steer==1) {
                 PlayerCarSprite.translateX(speed * delta);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)||steer==-1) {
                 PlayerCarSprite.translateX(-speed * delta);
             }
 
@@ -495,6 +501,26 @@ public class GameScreen implements Screen {
             stage.dispose(); // Dispose the stage
 
     }
+
+    public static Texture convertBufferedImageToTexture(BufferedImage bufferedImage) {
+        // Convert BufferedImage to Pixmap
+        Pixmap pixmap = new Pixmap(bufferedImage.getWidth(), bufferedImage.getHeight(), Pixmap.Format.RGBA8888);
+        for (int y = 0; y < bufferedImage.getHeight(); y++) {
+            for (int x = 0; x < bufferedImage.getWidth(); x++) {
+                int rgb = bufferedImage.getRGB(x, y);
+                int r = (rgb >> 16) & 0xFF;
+                int g = (rgb >> 8) & 0xFF;
+                int b = rgb & 0xFF;
+                int a = (rgb >> 24) & 0xFF;
+                pixmap.drawPixel(x, y, (a << 24) | (r << 16) | (g << 8) | b);
+            }
+        }
+        // Create Texture from Pixmap
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose(); // Clean up the Pixmap
+        return texture;
+    }
+
 
     }
 

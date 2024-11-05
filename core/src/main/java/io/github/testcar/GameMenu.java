@@ -89,6 +89,7 @@ public class GameMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Game Exited!");
+                dispose();
                 System.exit(-1);
             }
 

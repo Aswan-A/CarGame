@@ -70,6 +70,7 @@ public class PauseScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Resume Button Clicked!");
+
                 gameScreen.resumeGame(); // Call resumeGame on the existing GameScreen instance
                 gameScreen.playmusic();
                 Main game = (Main) Gdx.app.getApplicationListener();
@@ -91,6 +92,7 @@ public class PauseScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Button Clicked!");
                 dispose(); // Dispose of the PauseScreen instance
+                HeadTiltDetector.stop();
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameMenu(batch, selectedCarTexture)); // Navigate to GameMenu
             }
