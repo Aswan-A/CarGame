@@ -33,6 +33,8 @@ public class StoreScreen implements Screen {
     private Texture car7Texture;
     private Texture car8Texture;
     private ImageButton selectButton;
+    private ImageButton selectedCarButton; // Track the currently selected button
+
     // Play button texture
     Texture selectButtonTexture = new Texture("Selectbutton.png");
 
@@ -98,11 +100,23 @@ public class StoreScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 selectedCar = carName; // Update selected car
                 selectedCarTexture = carTexture; // Set selected texture
+
+                // Reset the color of the previously selected button, if any
+                if (selectedCarButton != null) {
+                    selectedCarButton.getImage().setColor(1f, 1f, 1f, 1f); // Reset to original color
+                }
+
+                // Apply red tint to the currently selected button
+                carButton.getImage().setColor(0f, 1f, 0f, 0.75f); // Change to red
+                selectedCarButton = carButton; // Update reference to the selected button
+
                 System.out.println("Selected: " + selectedCar); // Debug log
             }
         });
         return carButton;
     }
+
+
 
     private ImageButton createSelectButton() {
         TextureRegion buttonRegion = new TextureRegion(selectButtonTexture);
@@ -124,7 +138,7 @@ public class StoreScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1); // Clear the screen
+        Gdx.gl.glClearColor(0, 0, 0, 0.5f); // Clear the screen
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT); // Clear the buffer
 
         batch.begin();

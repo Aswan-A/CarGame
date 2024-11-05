@@ -217,7 +217,7 @@ public class GameScreen implements Screen {
             buildingSprite = new Sprite(buildingTexture);
             treeY = 13.31f;
 //                    System.out.println(viewport.getWorldWidth());
-            treePositions = new float[]{4f,8f,12f,17.5f};
+            treePositions = new float[]{4f,8f,12f,14.5f};
             treeIndex = MathUtils.random(0, treePositions.length - 1);
             treeX = treePositions[treeIndex];
             treeXY=treeX;

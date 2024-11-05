@@ -56,7 +56,7 @@ public class SplashScreen implements Screen {
         batch.end();
 
         // Check if enough time has passed (e.g., 3 seconds)
-        if (TimeUtils.nanoTime() - startTime > 3_000_000_000L) {
+        if (TimeUtils.nanoTime() - startTime > 2_000_000_000L) {
             // Replace with your main screen (e.g., GameMenu)
             Main game = (Main) Gdx.app.getApplicationListener();
             game.setScreen(new GameMenu(batch, selectedCarTexture));
