@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import static io.github.testcar.GameMenu.isMusicOn;
+
 
 public class PauseScreen implements Screen {
 
@@ -70,8 +72,10 @@ public class PauseScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Resume Button Clicked!");
+
                 gameScreen.resumeGame(); // Call resumeGame on the existing GameScreen instance
-                gameScreen.playmusic();
+                if (isMusicOn){
+                gameScreen.playmusic();}
                 Main game = (Main) Gdx.app.getApplicationListener();
                 dispose(); // Dispose of the PauseScreen instance
                 game.setScreen(gameScreen); // Switch back to GameScreen without creating a new instance
@@ -91,6 +95,7 @@ public class PauseScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Button Clicked!");
                 dispose(); // Dispose of the PauseScreen instance
+                HeadTiltDetector.stop();
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameMenu(batch, selectedCarTexture)); // Navigate to GameMenu
             }

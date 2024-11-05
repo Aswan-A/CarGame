@@ -2,6 +2,7 @@ package io.github.testcar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import static io.github.testcar.GameMenu.isMusicOn;
 
 public class StoreScreen implements Screen {
 
@@ -34,7 +37,7 @@ public class StoreScreen implements Screen {
     private Texture car8Texture;
     private ImageButton selectButton;
     private ImageButton selectedCarButton; // Track the currently selected button
-
+    Music music;
     // Play button texture
     Texture selectButtonTexture = new Texture("Selectbutton.png");
 
@@ -66,7 +69,11 @@ public class StoreScreen implements Screen {
         carTable.row();
         stage.addActor(createSelectButton()); // Add button to the stage
         stage.addActor(carTable); // Add the table to the stage
-
+        music = Gdx.audio.newMusic(Gdx.files.internal("music1.mp3"));
+        if (isMusicOn){
+            music.setLooping(true);
+            music.setVolume(1f);
+            music.play();}
     }
 
     private void initialize() {
@@ -129,6 +136,7 @@ public class StoreScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Selected car confirmed: " + selectedCar); // Confirm selected car
                 Main game = (Main) Gdx.app.getApplicationListener();
+                music.stop();
                 game.setScreen(new GameMenu(batch, selectedCarTexture)); // Navigate to GameMenu
             }
         });

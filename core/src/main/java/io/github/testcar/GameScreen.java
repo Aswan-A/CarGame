@@ -25,6 +25,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static io.github.testcar.GameMenu.isMusicOn;
+
 public class GameScreen implements Screen {
     Texture backgroundTexture;
         Texture PlayerCarTexture;
@@ -116,6 +118,7 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
 
                 System.out.println("Pause Button Clicked!");
+                HeadTiltDetector.stop();
                 pauseGame();
                 music.pause();
                 Main game = (Main) Gdx.app.getApplicationListener();
@@ -200,9 +203,10 @@ public class GameScreen implements Screen {
             dropSprites = new Array<>();
             PlayerCarRectangle = new Rectangle();
             dropRectangle = new Rectangle();
+            if (isMusicOn){
             music.setLooping(true);
-            music.setVolume(0f);
-            music.play();
+            music.setVolume(1f);
+            music.play();}
             score = 0;
             Score=" 0";
             yourfont=new BitmapFont();
@@ -303,10 +307,10 @@ public class GameScreen implements Screen {
             float speed = 12f;
             float delta = Gdx.graphics.getDeltaTime();
 
-//            int steer =HeadTiltDetector.getSteeringDirection();
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            int steer =HeadTiltDetector.getSteeringDirection();
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)||steer==1) {
                 PlayerCarSprite.translateX(speed * delta);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)||steer==-1) {
                 PlayerCarSprite.translateX(-speed * delta);
             }
 
