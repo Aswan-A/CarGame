@@ -24,8 +24,6 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import java.awt.image.BufferedImage;
-
 public class GameScreen implements Screen {
     Texture backgroundTexture;
         Texture PlayerCarTexture;
@@ -161,9 +159,6 @@ public class GameScreen implements Screen {
         float scale2;
 
         public void create() {
-
-
-
             backgroundTexture = new Texture("Adish.png");
             if(selectedCarTexture!=null){
                 PlayerCarTexture =selectedCarTexture;
@@ -211,7 +206,7 @@ public class GameScreen implements Screen {
             score = 0;
             Score=" 0";
             yourfont=new BitmapFont();
-            yourfont.getData().setScale(0.01f, 0.01f);
+            yourfont.getData().setScale(0.1f, 0.1f);
             preferences = Gdx.app.getPreferences("MyGamePreferences");
             highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
             shadowSprite.setPosition(0, 0);
@@ -230,14 +225,14 @@ public class GameScreen implements Screen {
             treeX3Y=treeX;
             treePositions2 = new float[]{20f,24f,28f,32.5f};
             treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-            treeX2 = 17.5f;
+            treeX2 = treePositions2[treeIndex2];
             treeX2Y=treeX2;
             treeSpeed = 1f;  // Adjust the speed as necessary
             scale2 = 1f;
-
-            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
-            Thread headTiltThread = new Thread(headTiltDetector);
-            headTiltThread.start();
+            createonetree();
+//            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
+//            Thread headTiltThread = new Thread(headTiltDetector);
+//            headTiltThread.start();
         }
 
     @Override
@@ -321,7 +316,21 @@ public class GameScreen implements Screen {
 //                PlayerCarSprite.setCenterX(touchPos.x);
 //            }
         }
-
+    private void createonetree(){
+        treeSprite = createtree();  // Create a new sprite when the tree goes off screen
+        treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
+        treeY =13.3f;
+        treePositions = new float[]{4f,8f,12f,14f};
+        treeIndex = MathUtils.random(0, treePositions.length - 1);
+        treeX = treePositions[treeIndex];
+        treeXY=treeX;
+        treePositions2 = new float[]{21f,24f,28f,32.5f};
+        treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
+        treeX2= treePositions2[treeIndex2];
+        treeX2Y=treeX2;
+        treeX3= viewport.getWorldWidth()/5;
+        scale2=0;
+    }
         private void logic() {
             if (gameOver[0]) return;
             float worldWidth = viewport.getWorldWidth();
@@ -381,7 +390,7 @@ public class GameScreen implements Screen {
                 treeXY=treeX;
                 treePositions2 = new float[]{21f,24f,28f,32.5f};
                 treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-                treeX2= 17.5f;
+                treeX2= treePositions2[treeIndex2];
                 treeX2Y=treeX2;
                 treeX3= viewport.getWorldWidth()/5;
                 scale2=0;
@@ -501,26 +510,6 @@ public class GameScreen implements Screen {
             stage.dispose(); // Dispose the stage
 
     }
-
-    public static Texture convertBufferedImageToTexture(BufferedImage bufferedImage) {
-        // Convert BufferedImage to Pixmap
-        Pixmap pixmap = new Pixmap(bufferedImage.getWidth(), bufferedImage.getHeight(), Pixmap.Format.RGBA8888);
-        for (int y = 0; y < bufferedImage.getHeight(); y++) {
-            for (int x = 0; x < bufferedImage.getWidth(); x++) {
-                int rgb = bufferedImage.getRGB(x, y);
-                int r = (rgb >> 16) & 0xFF;
-                int g = (rgb >> 8) & 0xFF;
-                int b = rgb & 0xFF;
-                int a = (rgb >> 24) & 0xFF;
-                pixmap.drawPixel(x, y, (a << 24) | (r << 16) | (g << 8) | b);
-            }
-        }
-        // Create Texture from Pixmap
-        Texture texture = new Texture(pixmap);
-        pixmap.dispose(); // Clean up the Pixmap
-        return texture;
-    }
-
 
     }
 

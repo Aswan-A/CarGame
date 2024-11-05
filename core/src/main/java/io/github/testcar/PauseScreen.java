@@ -154,6 +154,7 @@ public class PauseScreen implements Screen {
 
     @Override
     public void resize(int i, int i1) {
+        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true); // Update the viewport
 
     }
 

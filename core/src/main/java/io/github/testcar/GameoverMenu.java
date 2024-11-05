@@ -49,7 +49,7 @@ public class GameoverMenu implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // Play button texture
-        Texture resumebuttonTexture = new Texture("Resumebutton.png");
+        Texture resumebuttonTexture = new Texture("Restartbutton.png");
         TextureRegion buttonRegion = new TextureRegion(resumebuttonTexture);
         TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
         ImageButton button1 = new ImageButton(buttonDrawable);
