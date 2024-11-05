@@ -22,58 +22,58 @@ public class GameMenu implements Screen {
     private FitViewport viewport;
     private Texture backgroundTexture;
     private Sprite backgroundSprite;
+    private Stage stage;
 
-    private Stage stage; // Declare Stage
     private Texture playbuttonTexture;
     private ImageButton button1;
-    private Screen screen;
     private Texture StorebuttonTexture;
     private ImageButton button2;
     private ImageButton button3;
     private ImageButton button4;
     private ImageButton button5;
+
     private Texture selectedCarTexture;
     private Texture ExitbuttonTexture;
     private Texture AudiobuttonTexture;
-    public static boolean isMusicOn=true; // Track if music is on
     private Texture musicOnTexture;
     private Texture musicOffTexture;
     private Music music;
+    private Texture normalTexture;
+    private Texture selectedTexture;
+
+    private boolean isSelected;
+    public static boolean isMusicOn = true;
+
     float screenHeight;
     float screenWidth;
-    int width;
-    int height;
-    int width2;
-    int height2;
-    int width3;
-    int height3;
-    int height5;
-    int width5;
-    private Texture ControllerbuttonTexture;
-    private TextureRegionDrawable initialDrawable;
-
+    int width, height, width2, height2, width3, height3, height5, width5;
 
     public GameMenu(SpriteBatch batch, Texture selectedCarTexture) {
         this.batch = batch;
-        initializeViewport(); // Call this to ensure viewport is set up
-        create();  // Call create to initialize resources
-        setupStage(); // Setup the stage and buttons
-        this.selectedCarTexture=selectedCarTexture;
+        this.selectedCarTexture = selectedCarTexture;
+
+        initializeViewport();
+        create();
+        setupStage();
     }
 
     private void initializeViewport() {
-        viewport = new FitViewport(35, 20); // Initialize the viewport
+        viewport = new FitViewport(35, 20);
     }
 
     private void create() {
-
+        // Load assets
+        normalTexture = new Texture("Head.png");
+        selectedTexture = new Texture("WASD.png");
         backgroundTexture = new Texture("GameBackground.jpg");
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+
         musicOnTexture = new Texture("MusicOn.png");
         musicOffTexture = new Texture("MusicOff.png");
         music = Gdx.audio.newMusic(Gdx.files.internal("music1.mp3"));
-        if (isMusicOn){
+
+        if (isMusicOn) {
             music.play();
             music.setLooping(true);
         }
@@ -86,36 +86,33 @@ public class GameMenu implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        // Play button texture
+        // Initialize button textures and create button styles
         playbuttonTexture = new Texture("Startbutton.png");
-        height = playbuttonTexture.getHeight();
         width = playbuttonTexture.getWidth();
+        height = playbuttonTexture.getHeight();
 
-        TextureRegion buttonRegion = new TextureRegion(playbuttonTexture);
-        TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
-        button1 = new ImageButton(buttonDrawable);
-        System.out.println(width+" "+height);
-        button1.setPosition((screenWidth/2)-((float) width /2), (3*screenHeight/4)-((float) height /2));
-        System.out.println(viewport.getWorldHeight());
+        TextureRegionDrawable playButtonDrawable = new TextureRegionDrawable(new TextureRegion(playbuttonTexture));
+        button1 = new ImageButton(playButtonDrawable);
+        button1.setPosition((screenWidth / 2) - (width / 2f), (3 * screenHeight / 4) - (height / 2f));
 
+        // Play button listener
         button1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Start Game Button Clicked!");
-                Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
+                Main game = (Main) Gdx.app.getApplicationListener();
                 music.stop();
-                game.setScreen(new GameScreen(batch,selectedCarTexture)); // Switch to GameScreen
+                game.setScreen(new GameScreen(batch, selectedCarTexture));
             }
-
         });
 
         ExitbuttonTexture = new Texture("Quitbutton.png");
-        height2 = ExitbuttonTexture.getHeight();
         width2 = ExitbuttonTexture.getWidth();
-        TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
-        TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
-        button2 = new ImageButton(buttonDrawable2);
-        button2.setPosition((screenWidth/2)-((float) width2 /2), (screenHeight/4)-((float) height2 /2));
+        height2 = ExitbuttonTexture.getHeight();
+
+        TextureRegionDrawable exitButtonDrawable = new TextureRegionDrawable(new TextureRegion(ExitbuttonTexture));
+        button2 = new ImageButton(exitButtonDrawable);
+        button2.setPosition((screenWidth / 2) - (width2 / 2f), (screenHeight / 4) - (height2 / 2f));
 
         button2.addListener(new ClickListener() {
             @Override
@@ -125,77 +122,82 @@ public class GameMenu implements Screen {
                 dispose();
                 System.exit(-1);
             }
-
         });
 
         StorebuttonTexture = new Texture("GarageButton.png");
-        height3 = StorebuttonTexture.getHeight();
         width3 = StorebuttonTexture.getWidth();
-        TextureRegion buttonRegion3 = new TextureRegion(StorebuttonTexture);
-        TextureRegionDrawable buttonDrawable3 = new TextureRegionDrawable(buttonRegion3);
-        button3 = new ImageButton(buttonDrawable3);
-        button3.setPosition((screenWidth/2)-((float) width3 /2), (screenHeight/2)-((float) height3 /2));
+        height3 = StorebuttonTexture.getHeight();
+
+        TextureRegionDrawable storeButtonDrawable = new TextureRegionDrawable(new TextureRegion(StorebuttonTexture));
+        button3 = new ImageButton(storeButtonDrawable);
+        button3.setPosition((screenWidth / 2) - (width3 / 2f), (screenHeight / 2) - (height3 / 2f));
 
         button3.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Store!");
-                Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
+                Main game = (Main) Gdx.app.getApplicationListener();
                 music.stop();
-                game.setScreen(new StoreScreen(batch)); // Switch to GameScreen
+                game.setScreen(new StoreScreen(batch));
             }
-
         });
-        if (isMusicOn){initialDrawable = new TextureRegionDrawable(new TextureRegion(musicOnTexture));}
-        else{ initialDrawable = new TextureRegionDrawable(new TextureRegion(musicOffTexture));}
+
+        // Music toggle button
+        TextureRegionDrawable initialDrawable = isMusicOn ? new TextureRegionDrawable(new TextureRegion(musicOnTexture))
+            : new TextureRegionDrawable(new TextureRegion(musicOffTexture));
         button4 = new ImageButton(initialDrawable);
-        button4.setPosition(Gdx.graphics.getWidth()- musicOnTexture.getWidth(), Gdx.graphics.getHeight() - (2*musicOnTexture.getHeight()));
-//System.out.println(viewport.getWorldWidth()-musicOnTexture.getWidth());
-//        System.out.println("dfhfdhfgh");
+        button4.setPosition(screenWidth - musicOnTexture.getWidth(), screenHeight - (2 * musicOnTexture.getHeight()));
 
         button4.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                isMusicOn = !isMusicOn; // Toggle music state
-
+                isMusicOn = !isMusicOn;
                 if (isMusicOn) {
                     button4.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(musicOnTexture));
-                    music.play(); // Turn music on
+                    music.play();
                 } else {
                     button4.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(musicOffTexture));
-
-                    music.pause(); // Turn music off
                     music.stop();
                 }
-
                 System.out.println("Music Button Clicked! Music is now " + (isMusicOn ? "On" : "Off"));
             }
         });
-        ControllerbuttonTexture = new Texture("Controller.png");
-        height5 = ControllerbuttonTexture.getHeight();
-        width5 = ControllerbuttonTexture.getWidth();
-        TextureRegion buttonRegion5 = new TextureRegion(ControllerbuttonTexture);
-        TextureRegionDrawable buttonDrawable5 = new TextureRegionDrawable(buttonRegion5);
-        button5 = new ImageButton(buttonDrawable5);
-        button5.setPosition((Gdx.graphics.getWidth()- musicOnTexture.getWidth()), Gdx.graphics.getHeight() - (6*musicOnTexture.getHeight()));
 
+        // Initialize button styles
+        ImageButton.ImageButtonStyle normalStyle = new ImageButton.ImageButtonStyle();
+        normalStyle.imageUp = new TextureRegionDrawable(new TextureRegion(normalTexture));
+
+        ImageButton.ImageButtonStyle selectedStyle = new ImageButton.ImageButtonStyle();
+        selectedStyle.imageUp = new TextureRegionDrawable(new TextureRegion(selectedTexture));
+
+// Initialize button with normal style
+        button5 = new ImageButton(normalStyle);
+        button5.setPosition(screenWidth - normalTexture.getWidth(), screenHeight - (4 * normalTexture.getHeight()));
         button5.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Controller Button Pressed!");
-                Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
-                game.setScreen(new StoreScreen(batch)); // Switch to GameScreen
+
+                // Toggle the selection state
+                isSelected = !isSelected;
+
+                // Update button style based on the new state
+                button5.setStyle(isSelected ? selectedStyle : normalStyle);
+
+                // Switch to StoreScreen only if selected
+                if (isSelected) {
+                }
             }
-
         });
-        stage.addActor(button1);// Add button to the stage
-        stage.addActor(button2);// Add button to the stage
-        stage.addActor(button3);// Add button to the stage
-        stage.addActor(button4);// Add button to the stage
-        stage.addActor(button5);// Add button to the stage
 
-
+        // Add buttons to the stage
+        stage.addActor(button1);
+        stage.addActor(button2);
+        stage.addActor(button3);
+        stage.addActor(button4);
+        stage.addActor(button5);
     }
+
 
     @Override
     public void show() {

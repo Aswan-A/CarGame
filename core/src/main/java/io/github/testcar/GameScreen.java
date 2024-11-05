@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -42,37 +43,46 @@ public class GameScreen implements Screen {
         static Sprite treeSprite;
         static Sprite treeSprite2;
 
-        Sprite backgroundSprite;
-        Sprite backgroundSprite2;
-        Sprite shadowSprite;
-        Sprite shadowSprite2;
-        Vector2 touchPos;
-        static Array<Sprite> dropSprites;
-        float dropTimer;
-        Rectangle PlayerCarRectangle;
-        Rectangle dropRectangle;
-        private static int score;
-        private String Score;
-        BitmapFont yourfont;
-        static boolean[] gameOver = {false};
-        private int fl=1;
-        float shadowY;
-        float shadowY2;
-        float shadowSpeed;
-        int u;
-        Texture buildingTexture;
-        Texture TreeTexture;
-        Texture TreeTexture2;
-        Sprite buildingSprite;
-        Sprite TreeSprite;
-        float treeX3;
-        float treeX3Y;
-        Texture BuildTexture;
-        private Sprite BuildSprite;
-        private float[] treePositions;
-        private int treeIndex;
-        private float[] treePositions2;
-        private int treeIndex2;
+    static Sprite OptionSprite1;
+    static Sprite OptionSprite2;
+    static Sprite OptionSprite3;
+    int flag=1;
+    Sprite backgroundSprite;
+    Sprite backgroundSprite2;
+    Sprite shadowSprite;
+    Sprite shadowSprite2;
+    Vector2 touchPos;
+    static Array<Sprite> dropSprites;
+    float dropTimer;
+    Rectangle PlayerCarRectangle;
+    Rectangle dropRectangle;
+    private static int score;
+    private String Score;
+    BitmapFont yourfont;
+    static boolean[] gameOver = {false};
+    private int fl=1;
+    float shadowY;
+    float shadowY2;
+    float shadowSpeed;
+    int u;
+    Texture buildingTexture;
+    Texture TreeTexture;
+    Texture TreeTexture2;
+
+    Texture OptionTexture1;
+    Texture OptionTexture2;
+    Texture OptionTexture3;
+
+    Sprite buildingSprite;
+    Sprite TreeSprite;
+    float treeX3;
+    float treeX3Y;
+    Texture BuildTexture;
+    private Sprite BuildSprite;
+    private float[] treePositions;
+    private int treeIndex;
+    private float[] treePositions2;
+    private int treeIndex2;
     private Screen screen; // Change the type to Screen
     private Texture PausebuttonTexture;
     private ImageButton button1;
@@ -81,6 +91,10 @@ public class GameScreen implements Screen {
     private boolean isPaused;
     private FrameBuffer frameBuffer;
     Texture selectedCarTexture;
+    private float opt1XY;
+    private float opt2XY;
+    private float opt3XY;
+
     GameScreen(SpriteBatch batch, Texture selectedCarTexture) {
         this.batch = batch;
         this.selectedCarTexture=selectedCarTexture;
@@ -118,7 +132,6 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
 
                 System.out.println("Pause Button Clicked!");
-                HeadTiltDetector.stop();
                 pauseGame();
                 music.pause();
                 Main game = (Main) Gdx.app.getApplicationListener();
@@ -146,20 +159,29 @@ public class GameScreen implements Screen {
 
 
     enum GameState {
-            RUNNING
-        }
-        private static io.github.testcar.GameScreen.GameState gameState = GameState.RUNNING;
-        private Preferences preferences;
-        private static final String HIGH_SCORE_KEY = "high_score";
-        private static int highScore=0;
-        int flag=0;
-        float treeY;
-        float treeX;
-        float treeXY;
-        float treeX2;
-        float treeX2Y;
-        float treeSpeed;
-        float scale2;
+        RUNNING
+    }
+    private static io.github.testcar.GameScreen.GameState gameState = GameState.RUNNING;
+    private Preferences preferences;
+    private static final String HIGH_SCORE_KEY = "high_score";
+    private static int highScore=0;
+    float treeY;
+    float treeX;
+    float treeXY;
+    float treeX2;
+    float treeX2Y;
+    float treeSpeed;
+    float scale2;
+    float scale3;
+
+    float Opt1Y;
+    float Opt1X;
+
+    float Opt2Y;
+    float Opt2X;
+
+    float Opt3Y;
+    float Opt3X;
 
         public void create() {
             backgroundTexture = new Texture("Adish.png");
@@ -172,15 +194,19 @@ public class GameScreen implements Screen {
             BuildTexture=new Texture("Build3.png");
             TreeTexture=new Texture("Tree.png");
 
-            TreeTexture2=new Texture("Tree.png");
-            dropTexture = new Texture("drop.png");
-            dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
-            music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
-            shadowTexture=new Texture("resized_black_white_alternate_lines_shadow.png");
-            shadowTexture2=new Texture("resized_black_white_alternate_lines_shadow.png");
-            viewport = new FitViewport(35, 20);
-            backgroundSprite=new Sprite(backgroundTexture);
-            backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+        OptionTexture1 =new Texture("opt1.png");
+        OptionTexture2 =new Texture("opt2.png");
+        OptionTexture3 =new Texture("opt3.png");
+
+        TreeTexture2=new Texture("Tree.png");
+        dropTexture = new Texture("drop.png");
+        dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        shadowTexture=new Texture("resized_black_white_alternate_lines_shadow.png");
+        shadowTexture2=new Texture("resized_black_white_alternate_lines_shadow.png");
+        viewport = new FitViewport(35, 20);
+        backgroundSprite=new Sprite(backgroundTexture);
+        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
 
             backgroundSprite2=new Sprite(backgroundTexture);
             backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
@@ -198,6 +224,42 @@ public class GameScreen implements Screen {
             treeSprite.setOrigin(treeSprite.getWidth()/2,0);
             treeSprite2 = new Sprite(TreeTexture);
             treeSprite2.setOrigin(treeSprite    .getWidth()/2,0);
+
+        OptionSprite1=new Sprite(OptionTexture1);
+        OptionSprite2=new Sprite(OptionTexture2);
+        OptionSprite3 = new Sprite(OptionTexture3);
+        OptionSprite1.setSize(0,0);
+        OptionSprite2.setSize(0,0);
+        OptionSprite3.setSize(0,0);
+        OptionSprite1.setPosition(2,5);
+        OptionSprite2.setPosition(2,5);
+
+        OptionSprite3.setPosition(2,5);
+
+        touchPos = new Vector2();
+        dropSprites = new Array<>();
+        PlayerCarRectangle = new Rectangle();
+        dropRectangle = new Rectangle();
+        music.setLooping(true);
+        music.setVolume(0f);
+        music.play();
+        score = 0;
+        Score=" 0";
+        yourfont=new BitmapFont();
+        yourfont.getData().setScale(0.1f, 0.1f);
+        preferences = Gdx.app.getPreferences("MyGamePreferences");
+        highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
+        shadowSprite.setPosition(0, 0);
+        shadowSprite2.setPosition(25, 25); // Ensure both shadows start in view
+        shadowY = 0;   // Initial Y position
+        shadowY2=0;
+        shadowSpeed = 4f;  // Speed of the shadow movement (in pixels per second)
+        u=1;
+        buildingSprite = new Sprite(buildingTexture);
+        treeY = 13.31f;
+        Opt1Y =13.31f;
+        Opt2Y=13.31f;
+        Opt3Y=13.31f;
 
             touchPos = new Vector2();
             dropSprites = new Array<>();
@@ -222,18 +284,24 @@ public class GameScreen implements Screen {
             buildingSprite = new Sprite(buildingTexture);
             treeY = 13.31f;
 //                    System.out.println(viewport.getWorldWidth());
-            treePositions = new float[]{4f,8f,12f,14.5f};
-            treeIndex = MathUtils.random(0, treePositions.length - 1);
-            treeX = treePositions[treeIndex];
-            treeXY=treeX;
-            treeX3Y=treeX;
-            treePositions2 = new float[]{20f,24f,28f,32.5f};
-            treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-            treeX2 = treePositions2[treeIndex2];
-            treeX2Y=treeX2;
-            treeSpeed = 1f;  // Adjust the speed as necessary
-            scale2 = 1f;
-            createonetree();
+        treePositions = new float[]{4f,8f,12f,14.5f};
+
+        treeIndex = MathUtils.random(0, treePositions.length - 1);
+        treeX = treePositions[treeIndex];
+        Opt1X =17.5f;
+        Opt2X=17.499995f;
+        Opt3X=17.500005f;
+
+
+        treeXY=treeX;
+        treeX3Y=treeX;
+        treePositions2 = new float[]{20f,24f,28f,32.5f};
+        treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
+        treeX2 = treePositions2[treeIndex2];
+        treeX2Y=treeX2;
+        treeSpeed = 1f;  // Adjust the speed as necessary
+        scale2 = 1f;
+        scale3=1f;
 //            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
 //            Thread headTiltThread = new Thread(headTiltDetector);
 //            headTiltThread.start();
@@ -307,12 +375,12 @@ public class GameScreen implements Screen {
             float speed = 12f;
             float delta = Gdx.graphics.getDeltaTime();
 
-            int steer =HeadTiltDetector.getSteeringDirection();
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)||steer==1) {
-                PlayerCarSprite.translateX(speed * delta);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)||steer==-1) {
-                PlayerCarSprite.translateX(-speed * delta);
-            }
+//            int steer =HeadTiltDetector.getSteeringDirection();
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            PlayerCarSprite.translateX(speed * delta);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            PlayerCarSprite.translateX(-speed * delta);
+        }
 
 //            if (Gdx.input.isTouched()) {
 //                touchPos.set(Gdx.input.getX(), Gdx.input.getY());
@@ -358,128 +426,214 @@ public class GameScreen implements Screen {
             }
         }
 
-        private void draw() {
-            ScreenUtils.clear(Color.BLACK);
-            viewport.apply();
-            stage.act(delta); // Update stage
-            batch.setProjectionMatrix(viewport.getCamera().combined);
-            batch.begin();
+    private void draw() {
+        ScreenUtils.clear(Color.BLACK);
+//        System.out.println(OptionSprite1.getHeight());
 
-            // Draw the background first
+        viewport.apply();
+        stage.act(delta); // Update stage
+        batch.setProjectionMatrix(viewport.getCamera().combined);
+        batch.begin();
+
+        // Draw the background first
 
 
-            float backgroundHeight = backgroundSprite.getHeight();
+        float backgroundHeight = backgroundSprite.getHeight();
 //            if (backgroundSprite.getY() <= 0 && fl==1) {
 //                backgroundSprite.setY(backgroundSprite2.getY() + backgroundHeight);
 //                fl=0;
 //            }
 //            backgroundSprite.draw(batch);
-            backgroundSprite2.draw(batch);
-            float delta = Gdx.graphics.getDeltaTime();
-            // Reset color to white for other drawing
-            batch.setColor(1f, 1f, 1f, 1f);
-            // Update the tree's position (moving it downwards)
+        backgroundSprite2.draw(batch);
+        float delta = Gdx.graphics.getDeltaTime();
+        // Reset color to white for other drawing
+        batch.setColor(1f, 1f, 1f, 1f);
+        // Update the tree's position (moving it downwards)
 
-            //System.out.println((treeY + 3));
-            //System.out.println(treeY + treeSprite.getHeight());
-            // Check if the tree is outside the bottom of the screen
-            System.out.println(treeX2);
-            if (((treeY + treeSprite.getHeight())< 0) || ((treeX2 > (treeSprite.getWidth()+(viewport.getWorldWidth()))) && treeX3+14 < 0)){
-                // Reset the tree's position to the top
-                treeSprite = createtree();  // Create a new sprite when the tree goes off screen
-                treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
-                treeY =13.3f;
-                treePositions = new float[]{4f,8f,12f,14f};
+//System.out.println((treeY + 3));
+
+// Check if the tree is outside the bottom of the screen
+        if (((treeY + 5)< 0) || ((treeX2 > 38 && treeX3+14 < 0))){
+            // Reset the tree's position to the top
+            treeSprite = createtree();  // Create a new sprite when the tree goes off screen
+            treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
+            treeY =13.3f;
+            treePositions = new float[]{4f,8f,12f};
+            treeIndex = MathUtils.random(0, treePositions.length - 1);
+            treeX = treePositions[treeIndex];
+            treeXY=treeX;
+            treePositions2 = new float[]{21f,24f,28f,32.5f};
+            treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
+            treeX2= treePositions2[treeIndex2];
+            treeX2Y=treeX2;
+            treeX3= viewport.getWorldWidth()/5;
+            scale2=0;
+//            System.out.println(treeX);
+
+        }
+        if (Opt1Y +5<0){
+            // Reset the tree's position to the top
+            float optionHeight = OptionTexture1.getHeight()*scale3;
+            float optionWidth = OptionTexture1.getWidth()*scale3;
+            float optionHeight2 = OptionTexture2.getHeight()*scale3;
+            float optionWidth2 = OptionTexture2.getWidth()*scale3;
+            float optionHeight3 = OptionTexture3.getHeight()*scale3;
+            float optionWidth3 = OptionTexture3.getWidth()*scale3;
+            OptionSprite1= new Sprite(OptionTexture1);
+            OptionSprite1.setSize(optionWidth, optionHeight);
+            OptionSprite1.setOrigin(optionWidth / 2, optionHeight / 2);
+//            System.out.println("Origin X: " + OptionSprite1.getOriginX());
+//            System.out.println("Origin Y: " + OptionSprite1.getOriginY());
+//            System.out.println("Position X: " + OptionSprite1.getX());
+//            System.out.println("Position Y: " + OptionSprite1.getY());
+
+            OptionSprite2= new Sprite(OptionTexture2);
+            OptionSprite2.setSize(optionWidth2, optionHeight2);
+            OptionSprite2.setOrigin(optionWidth / 2, optionHeight / 2);
+
+            OptionSprite3= new Sprite(OptionTexture3);
+            OptionSprite3.setSize(optionWidth3, optionHeight3);
+            OptionSprite3.setOrigin(optionWidth / 2, optionHeight / 2);
+
+            Opt1Y =13.3f;
+            Opt1X =17.5f;
+            opt1XY = Opt1X;
+
+            Opt2X =17.499995f;
+            opt2XY = Opt2X;
+
+            Opt3X =17.500005f;
+            opt3XY = Opt3X;
+            scale3=0;
+            System.out.println("sff");
+            flag=0;
+            System.out.println(Opt2X);
+                /*treePositions = new float[]{4f,8f,12f,14f};
                 treeIndex = MathUtils.random(0, treePositions.length - 1);
                 treeX = treePositions[treeIndex];
                 treeXY=treeX;
                 treePositions2 = new float[]{21f,24f,28f,32.5f};
                 treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-                treeX2= treePositions2[treeIndex2];
-                treeX2Y=treeX2;
-                treeX3= viewport.getWorldWidth()/5;
-                scale2=0;
-            }
+                treeX2= 17.5f;
+                treeX2Y=treeX2;*/
+            //treeX3= viewport.getWorldWidth()/5;
+            //scale2=0;
+        }
+
 //        System.out.println(treeX+"    hi     ");
+//        System.out.println(OptionSprite1.getHeight());
 
 
 // Draw the tree texture at its current position
-            scale2 += 0.00003f;
+        scale2 += 0.00003f;
+        scale3 += 0.00003f;
 
-            float treeWidth = TreeTexture.getWidth() * scale2;
-            float treeHeight = TreeTexture.getHeight() * scale2;
-            treeY -= treeSpeed * delta;
-            float width = viewport.getWorldWidth()/2;
+        float treeWidth = TreeTexture.getWidth() * scale2;
+        float treeHeight = TreeTexture.getHeight() * scale2;
 
-//System.out.println(treeX2);
-            treeX =(((treeY-((viewport.getWorldHeight()/2)+9))*-((width)-(treeXY))/((-5)))+(width));
+        float optionHeight = OptionTexture1.getHeight()*scale3;
+        float optionWidth = OptionTexture1.getWidth()*scale3;
+        float optionHeight2 = OptionTexture2.getHeight()*scale3;
+        float optionWidth2 = OptionTexture2.getWidth()*scale3;
+        float optionHeight3 = OptionTexture3.getHeight()*scale3;
+        float optionWidth3 = OptionTexture3.getWidth()*scale3;
+
+
+        treeY -= treeSpeed * delta;
+        Opt1Y -=treeSpeed* delta;
+        Opt2Y -=treeSpeed* delta;
+        Opt3Y -=treeSpeed* delta;
+        float width = viewport.getWorldWidth()/2;
+
+        System.out.println(OptionTexture1.getWidth()*scale3);
+        treeX = (float) (((treeY-((viewport.getWorldHeight()/2)+9))*-((width)-(treeXY))/((-0.000015)))+(width));
+        Opt1X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*-((width)-(opt1XY))/((-0.000015)))+(width));
+        Opt2X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*-((width)-(opt2XY))/((-0.000015)))+(width));
+
 //            System.out.println(viewport.getWorldWidth()/4);
-                //   System.out.println(treeX2);
+        //   System.out.println(treeX2);
 
-            treeX2 =((treeY-((viewport.getWorldHeight()/2)+9))*((treeX2Y)-(width))/((-5)))+(width);
+        treeX2 = (float) (((treeY-((viewport.getWorldHeight()/2)+9))*((treeX2Y)-(width))/((-0.000015)))+(width));
+        Opt3X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*((opt3XY)-(width))/((-0.000015)))+(width));
 
-            treeX3=treeX-treeWidth;
+
+        treeX3=treeX-treeWidth;
 //                  System.out.println(treeY);
-            //       System.out.println(viewport.getWorldHeight());
+        //       System.out.println(viewport.getWorldHeight());
 
-            if (treeSprite != null) {
-                treeSprite.setPosition(treeX3, treeY);
-                treeSprite.setSize(treeWidth, treeHeight);
-                treeSprite.draw(batch);
-            }
+        if (treeSprite != null) {
 
+            treeSprite.setPosition(treeX, treeY);
+            treeSprite.setSize(treeWidth, treeHeight);
+            treeSprite.draw(batch);
+        }
+        if(flag==0) {
+            OptionSprite1.setPosition(Opt1X, Opt1Y);
+            OptionSprite1.setSize(optionWidth, optionHeight);
+            OptionSprite1.draw(batch);
 
+            OptionSprite2.setPosition(Opt2X, Opt1Y);
+            OptionSprite2.setSize(optionWidth2, optionHeight2);
+            OptionSprite2.draw(batch);
+
+            OptionSprite3.setPosition(Opt3X, Opt1Y);
+            OptionSprite3.setSize(optionWidth3, optionHeight3);
+            OptionSprite3.draw(batch);
+        }
 
 // Only draw treeSprite2 if it's not null
-            if (treeSprite2 != null) {
-                treeSprite2.setPosition(treeX2, treeY);
-                treeSprite2.setSize(treeWidth, treeHeight);
-                treeSprite2.draw(batch);
-            }
-            BuildSprite.setPosition(treeX3, treeY);
-            BuildSprite.setSize(treeWidth, treeHeight);
-            // Draw player car
+        if (treeSprite2 != null) {
+            treeSprite2.setPosition(treeX2, treeY);
+            treeSprite2.setSize(treeWidth, treeHeight);
+            treeSprite2.draw(batch);
+        }
+        BuildSprite.setPosition(treeX3, treeY);
+        BuildSprite.setSize(treeWidth, treeHeight);
+        // Draw player car
 
-            PlayerCarSprite.draw(batch);
-            float buildingWidth = viewport.getWorldWidth();  // Fit to the full width of the viewport
-            float buildingHeight = buildingWidth * ((float) buildingTexture.getHeight() / buildingTexture.getWidth()); // Maintain aspect ratio
-            // Draw Game Over texture if the game is over
-            if (gameOver[0]) {
-                batch.draw(GameoverTexture, viewport.getWorldWidth() / 2 - (float) GameoverTexture.getWidth() / 2,
-                    viewport.getWorldHeight() / 2 - (float) GameoverTexture.getHeight() / 2);
-            }
-            float xPosition = 0;  // Starting from the left edge
-            float yPosition = viewport.getWorldHeight() - buildingHeight;  // Position it at the top
+        PlayerCarSprite.draw(batch);
+        float buildingWidth = viewport.getWorldWidth();  // Fit to the full width of the viewport
+        float buildingHeight = buildingWidth * ((float) buildingTexture.getHeight() / buildingTexture.getWidth()); // Maintain aspect ratio
+        // Draw Game Over texture if the game is over
+        if (gameOver[0]) {
+            batch.draw(GameoverTexture, viewport.getWorldWidth() / 2 - (float) GameoverTexture.getWidth() / 2,
+                viewport.getWorldHeight() / 2 - (float) GameoverTexture.getHeight() / 2);
+        }
+        float xPosition = 0;  // Starting from the left edge
+        float yPosition = viewport.getWorldHeight() - buildingHeight;  // Position it at the top
 
-            // Draw the score at the top-left corner
-            yourfont.setColor(Color.WHITE);
-            yourfont.draw(batch, Score, 12, viewport.getWorldHeight() - 0.5f); // Adjusted position
+        // Draw the score at the top-left corner
+        yourfont.setColor(Color.WHITE);
+        yourfont.draw(batch, Score, 12, viewport.getWorldHeight() - 0.5f); // Adjusted position
 
-            batch.end();
-            stage.draw();
+        batch.end();
+        stage.draw();
 
+    }
+
+
+    private Sprite createtree() {
+        // Adjust size to match tree sprite size
+        float treeWidth = TreeTexture.getWidth();
+        float treeHeight = TreeTexture.getHeight();
+
+
+        // Randomly decide whether to create a tree or a building sprite
+        int randomChoice = MathUtils.random(1);  // 0 for tree, 1 for building
+
+        Sprite newSprite = null;
+        // newSprite =new Sprite(OptionTexture1);
+        if (randomChoice == 0) {
+            newSprite = new Sprite(TreeTexture);  // Create a tree sprite
+        } else if(randomChoice==1) {
+            newSprite = new Sprite(BuildTexture);  // Create a building sprite
         }
 
+        if(newSprite != null)
+            newSprite.setSize(treeWidth, treeHeight);  // Set its size
+        return newSprite;
+    }
 
-        private Sprite createtree() {
-            // Adjust size to match tree sprite size
-            float treeWidth = TreeTexture.getWidth();
-            float treeHeight = TreeTexture.getHeight();
-
-            // Randomly decide whether to create a tree or a building sprite
-            int randomChoice = MathUtils.random(1);  // 0 for tree, 1 for building
-
-            Sprite newSprite = null;
-            if (randomChoice == 0) {
-                newSprite = new Sprite(TreeTexture);  // Create a tree sprite
-            } else if(randomChoice==1) {
-                newSprite = new Sprite(BuildTexture);  // Create a building sprite
-            }
-
-            if(newSprite != null)
-                newSprite.setSize(treeWidth, treeHeight);  // Set its size
-            return newSprite;
-        }
 
 
         public void pause() {

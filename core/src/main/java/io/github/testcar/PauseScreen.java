@@ -47,7 +47,7 @@ public class PauseScreen implements Screen {
     }
 
     public void create() {
-        backgroundTexture = new Texture("PauseScreenBackground.jpg");
+        backgroundTexture = new Texture("Pausescreenbackground.png");
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth()/2, 3*viewport.getWorldHeight()/4);
         backgroundSprite.setX(viewport.getWorldWidth()/4);
@@ -87,24 +87,44 @@ public class PauseScreen implements Screen {
         TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
         TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
         ImageButton button2 = new ImageButton(buttonDrawable2);
-        button2.setSize(10, 7);
-        button2.setPosition(12, 4);
+        button2.setSize(10, 2);
+        button2.setPosition(12, 5);
 
+        // Inside a method, likely setupStage()
         button2.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Button Clicked!");
                 dispose(); // Dispose of the PauseScreen instance
-                HeadTiltDetector.stop();
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameMenu(batch, selectedCarTexture)); // Navigate to GameMenu
             }
-        }); // Closing bracket added
+        });
 
-        stage.addActor(button1); // Add button to the stage
-        stage.addActor(button2); // Add button to the stage
+// Initialize button3 and add it to the stage
+        Texture restartbuttonTexture = new Texture("Restartbutton.png");
+        TextureRegion buttonRegion3 = new TextureRegion(restartbuttonTexture);
+        TextureRegionDrawable buttonDrawable3 = new TextureRegionDrawable(buttonRegion3);
+        ImageButton button3 = new ImageButton(buttonDrawable3);
+        button3.setPosition(12, 6);
+        button3.setSize(10, 7); // Set size for button3
 
-        }
+        button3.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Restart Button Clicked!");
+                Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
+                game.setScreen(new GameScreen(batch, selectedCarTexture)); // Switch to GameScreen
+            }
+        });
+
+        stage.addActor(button1); // Add button1 to the stage
+        stage.addActor(button2); // Add button2 to the stage
+        stage.addActor(button3); // Add button3 to the stage
+
+// Close the method here if necessary, i.e., add a single closing brace here
+    }
+
 
     private void initializeViewport() {
         // Initialize the viewport here to ensure it is ready before resize calls
