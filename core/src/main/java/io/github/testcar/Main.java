@@ -12,8 +12,7 @@ public class Main extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        // Set the initial screen to GameScreen
-        setScreen(new GameMenu(batch, selectedCarTexture));
+        setScreen(new SplashScreen(new SpriteBatch()));
     }
 
     // No need to override render() - Game's render() method will handle it

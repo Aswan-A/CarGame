@@ -167,6 +167,7 @@ public class GameScreen implements Screen {
             buildingTexture=new Texture ("Building.png");
             BuildTexture=new Texture("Build3.png");
             TreeTexture=new Texture("Tree.png");
+
             TreeTexture2=new Texture("Tree.png");
             dropTexture = new Texture("drop.png");
             dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
@@ -190,8 +191,9 @@ public class GameScreen implements Screen {
             PlayerCarSprite.setSize(5, 5);
             BuildSprite=new Sprite(BuildTexture);
             treeSprite = new Sprite(TreeTexture);
-            treeSprite.setOrigin(TreeTexture.getWidth(),0);
+            treeSprite.setOrigin(treeSprite.getWidth()/2,0);
             treeSprite2 = new Sprite(TreeTexture);
+            treeSprite2.setOrigin(treeSprite    .getWidth()/2,0);
 
             touchPos = new Vector2();
             dropSprites = new Array<>();
@@ -222,7 +224,7 @@ public class GameScreen implements Screen {
             treeX3Y=treeX;
             treePositions2 = new float[]{20f,24f,28f,32.5f};
             treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-            treeX2 = treePositions2[treeIndex2];
+            treeX2 = 17.5f;
             treeX2Y=treeX2;
             treeSpeed = 1f;  // Adjust the speed as necessary
             scale2 = 1f;
@@ -253,6 +255,9 @@ public class GameScreen implements Screen {
             if(Gdx.input.getInputProcessor() == null) {
                 Gdx.input.setInputProcessor(stage);
             }
+            treeSprite2.setOrigin(treeSprite2.getWidth()/2,0);
+            treeSprite.setOrigin(treeSprite.getWidth()/2,0);
+
 //          System.out.println("56");
             checkForPauseInput();
             switch (gameState) {
@@ -356,7 +361,7 @@ public class GameScreen implements Screen {
             batch.setColor(1f, 1f, 1f, 1f);
             // Update the tree's position (moving it downwards)
 
-System.out.println((treeY + 3));
+//System.out.println((treeY + 3));
 
 // Check if the tree is outside the bottom of the screen
             if (((treeY + 5)< 0) || ((treeX2 > 38 && treeX3+14 < 0))){
@@ -370,7 +375,7 @@ System.out.println((treeY + 3));
                 treeXY=treeX;
                 treePositions2 = new float[]{21f,24f,28f,32.5f};
                 treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-                treeX2= treePositions2[treeIndex2];
+                treeX2= 17.5f;
                 treeX2Y=treeX2;
                 treeX3= viewport.getWorldWidth()/5;
                 scale2=0;
@@ -386,7 +391,7 @@ System.out.println((treeY + 3));
             treeY -= treeSpeed * delta;
             float width = viewport.getWorldWidth()/2;
 
-
+//System.out.println(treeX2);
             treeX =(((treeY-((viewport.getWorldHeight()/2)+9))*-((width)-(treeXY))/((-5)))+(width));
 //            System.out.println(viewport.getWorldWidth()/4);
                 //   System.out.println(treeX2);
