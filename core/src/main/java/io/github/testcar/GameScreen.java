@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import static io.github.testcar.GameMenu.isMusicOn;
 
@@ -379,10 +380,11 @@ public class GameScreen implements Screen {
             batch.setColor(1f, 1f, 1f, 1f);
             // Update the tree's position (moving it downwards)
 
-//System.out.println((treeY + 3));
-
-// Check if the tree is outside the bottom of the screen
-            if (((treeY + 5)< 0) || ((treeX2 > 38 && treeX3+14 < 0))){
+            //System.out.println((treeY + 3));
+            //System.out.println(treeY + treeSprite.getHeight());
+            // Check if the tree is outside the bottom of the screen
+            System.out.println(treeX2);
+            if (((treeY + treeSprite.getHeight())< 0) || ((treeX2 > (treeSprite.getWidth()+(viewport.getWorldWidth()))) && treeX3+14 < 0)){
                 // Reset the tree's position to the top
                 treeSprite = createtree();  // Create a new sprite when the tree goes off screen
                 treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
