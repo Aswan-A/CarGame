@@ -24,6 +24,8 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import static io.github.testcar.GameMenu.isMusicOn;
+
 public class GameScreen implements Screen {
     Texture backgroundTexture;
         Texture PlayerCarTexture;
@@ -200,9 +202,10 @@ public class GameScreen implements Screen {
             dropSprites = new Array<>();
             PlayerCarRectangle = new Rectangle();
             dropRectangle = new Rectangle();
+            if (isMusicOn){
             music.setLooping(true);
-            music.setVolume(0f);
-            music.play();
+            music.setVolume(1f);
+            music.play();}
             score = 0;
             Score=" 0";
             yourfont=new BitmapFont();

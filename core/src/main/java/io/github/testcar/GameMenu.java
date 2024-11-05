@@ -35,7 +35,7 @@ public class GameMenu implements Screen {
     private Texture selectedCarTexture;
     private Texture ExitbuttonTexture;
     private Texture AudiobuttonTexture;
-    private boolean isMusicOn = true; // Track if music is on
+    public static boolean isMusicOn=true; // Track if music is on
     private Texture musicOnTexture;
     private Texture musicOffTexture;
     private Music music;
@@ -50,6 +50,7 @@ public class GameMenu implements Screen {
     int height5;
     int width5;
     private Texture ControllerbuttonTexture;
+    private TextureRegionDrawable initialDrawable;
 
 
     public GameMenu(SpriteBatch batch, Texture selectedCarTexture) {
@@ -65,16 +66,20 @@ public class GameMenu implements Screen {
     }
 
     private void create() {
+
         backgroundTexture = new Texture("GameBackground.jpg");
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         musicOnTexture = new Texture("MusicOn.png");
         musicOffTexture = new Texture("MusicOff.png");
-        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("music1.mp3"));
+        if (isMusicOn){
+            music.play();
+            music.setLooping(true);
+        }
+
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
-        music.setLooping(true);
-        music.play();
     }
 
     private void setupStage() {
@@ -98,6 +103,7 @@ public class GameMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Start Game Button Clicked!");
                 Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
+                music.stop();
                 game.setScreen(new GameScreen(batch,selectedCarTexture)); // Switch to GameScreen
             }
 
@@ -115,6 +121,7 @@ public class GameMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Game Exited!");
+                music.stop();
                 dispose();
                 System.exit(-1);
             }
@@ -134,12 +141,13 @@ public class GameMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Store!");
                 Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
+                music.stop();
                 game.setScreen(new StoreScreen(batch)); // Switch to GameScreen
             }
 
         });
-
-        TextureRegionDrawable initialDrawable = new TextureRegionDrawable(new TextureRegion(musicOnTexture));
+        if (isMusicOn){initialDrawable = new TextureRegionDrawable(new TextureRegion(musicOnTexture));}
+        else{ initialDrawable = new TextureRegionDrawable(new TextureRegion(musicOffTexture));}
         button4 = new ImageButton(initialDrawable);
         button4.setPosition(Gdx.graphics.getWidth()- musicOnTexture.getWidth(), Gdx.graphics.getHeight() - (2*musicOnTexture.getHeight()));
 //System.out.println(viewport.getWorldWidth()-musicOnTexture.getWidth());
@@ -155,7 +163,9 @@ public class GameMenu implements Screen {
                     music.play(); // Turn music on
                 } else {
                     button4.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(musicOffTexture));
+
                     music.pause(); // Turn music off
+                    music.stop();
                 }
 
                 System.out.println("Music Button Clicked! Music is now " + (isMusicOn ? "On" : "Off"));
