@@ -13,7 +13,7 @@ public class Main extends Game {
     public void create() {
         batch = new SpriteBatch();
         setScreen(new SplashScreen(new SpriteBatch()));
-   //     setScreen(new GameoverMenu(new SpriteBatch()));
+  //      setScreen(new GameoverMenu(new SpriteBatch()));
     }
 
     // No need to override render() - Game's render() method will handle it

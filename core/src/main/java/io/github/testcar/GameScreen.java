@@ -224,11 +224,11 @@ public class GameScreen implements Screen {
             treeX3Y=treeX;
             treePositions2 = new float[]{20f,24f,28f,32.5f};
             treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-            treeX2 = 17.5f;
+            treeX2 = treePositions2[treeIndex2];
             treeX2Y=treeX2;
             treeSpeed = 1f;  // Adjust the speed as necessary
             scale2 = 1f;
-
+            createonetree();
 //            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
 //            Thread headTiltThread = new Thread(headTiltDetector);
 //            headTiltThread.start();
@@ -315,7 +315,21 @@ public class GameScreen implements Screen {
 //                PlayerCarSprite.setCenterX(touchPos.x);
 //            }
         }
-
+    private void createonetree(){
+        treeSprite = createtree();  // Create a new sprite when the tree goes off screen
+        treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
+        treeY =13.3f;
+        treePositions = new float[]{4f,8f,12f,14f};
+        treeIndex = MathUtils.random(0, treePositions.length - 1);
+        treeX = treePositions[treeIndex];
+        treeXY=treeX;
+        treePositions2 = new float[]{21f,24f,28f,32.5f};
+        treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
+        treeX2= treePositions2[treeIndex2];
+        treeX2Y=treeX2;
+        treeX3= viewport.getWorldWidth()/5;
+        scale2=0;
+    }
         private void logic() {
             if (gameOver[0]) return;
             float worldWidth = viewport.getWorldWidth();
@@ -375,7 +389,7 @@ public class GameScreen implements Screen {
                 treeXY=treeX;
                 treePositions2 = new float[]{21f,24f,28f,32.5f};
                 treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-                treeX2= 17.5f;
+                treeX2= treePositions2[treeIndex2];
                 treeX2Y=treeX2;
                 treeX3= viewport.getWorldWidth()/5;
                 scale2=0;
