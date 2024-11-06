@@ -12,8 +12,10 @@ public class Main extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        setScreen(new SplashScreen(new SpriteBatch()));
-  //      setScreen(new GameoverMenu(new SpriteBatch()));
+   //    setScreen(new SplashScreen(new SpriteBatch()));
+        setScreen(new GameoverMenu(new SpriteBatch()));
+//              setScreen(new asd(new SpriteBatch()));
+
     }
 
     // No need to override render() - Game's render() method will handle it

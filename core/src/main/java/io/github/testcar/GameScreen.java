@@ -1,5 +1,6 @@
 package io.github.testcar;
 
+
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -19,16 +20,17 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.BufferUtils;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.Preferences;
+
 
 import static io.github.testcar.GameMenu.isMusicOn;
+import static io.github.testcar.asd.generator;
 
 public class GameScreen implements Screen {
+    private  BitmapFont font;
     Texture backgroundTexture;
         Texture PlayerCarTexture;
         Texture dropTexture;
@@ -94,6 +96,10 @@ public class GameScreen implements Screen {
     private float opt1XY;
     private float opt2XY;
     private float opt3XY;
+    private String eq="";
+    private int sol;
+    private Preferences preferences;
+
 
     GameScreen(SpriteBatch batch, Texture selectedCarTexture) {
         this.batch = batch;
@@ -111,6 +117,8 @@ public class GameScreen implements Screen {
         isPaused = false; // Game starts unpaused
         setupStage();
         render(delta);
+        font = new BitmapFont(Gdx.files.internal("press.fnt"), Gdx.files.internal("press.png"), false);
+        font.getData().setScale(0.07f);
     }
     private void setupStage() {
 //        System.out.println("NOAH");
@@ -162,7 +170,6 @@ public class GameScreen implements Screen {
         RUNNING
     }
     private static io.github.testcar.GameScreen.GameState gameState = GameState.RUNNING;
-    private Preferences preferences;
     private static final String HIGH_SCORE_KEY = "high_score";
     private static int highScore=0;
     float treeY;
@@ -184,6 +191,8 @@ public class GameScreen implements Screen {
     float Opt3X;
 
         public void create() {
+            font = new BitmapFont(Gdx.files.internal("press.fnt"), Gdx.files.internal("press.png"), false);
+            font.getData().setScale(1.5f);
             backgroundTexture = new Texture("Adish.png");
             if(selectedCarTexture!=null){
                 PlayerCarTexture =selectedCarTexture;
@@ -305,6 +314,8 @@ public class GameScreen implements Screen {
 //            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
 //            Thread headTiltThread = new Thread(headTiltDetector);
 //            headTiltThread.start();
+            preferences = Gdx.app.getPreferences("MyGamePreferences");
+            highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
         }
 
     @Override
@@ -340,6 +351,17 @@ public class GameScreen implements Screen {
                     draw();   // Render the game
                     break;
             }
+        }
+    }
+
+    public static int getHighScore() {
+        return highScore;
+    }
+    public void checkAndUpdateHighScore(int score) {
+        if (score > highScore) {
+            highScore = score; // Update high score
+            preferences.putInteger(HIGH_SCORE_KEY, highScore); // Save the new high score
+            preferences.flush(); // Write the changes to storage
         }
     }
 
@@ -424,6 +446,56 @@ public class GameScreen implements Screen {
             if (backgroundSprite2.getY() <= -backgroundHeight) {
                 backgroundSprite2.setY(backgroundSprite.getY() + backgroundHeight);
             }
+            if (PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) && sol!=1) {
+                Main game = (Main) Gdx.app.getApplicationListener();
+                game.setScreen(new GameoverMenu(new SpriteBatch()));
+            }
+            if (PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle()) && sol!=2) {
+                Main game = (Main) Gdx.app.getApplicationListener();
+                game.setScreen(new GameoverMenu(new SpriteBatch()));            }
+            if (PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle()) && sol!=3) {
+                Main game = (Main) Gdx.app.getApplicationListener();
+                game.setScreen(new GameoverMenu(new SpriteBatch()));            }
+            if(PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) || PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle())||PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle())){
+                eq=generator.generateProblem();
+            System.out.println(eq);
+                sol=generator.Isol;
+                float optionHeight = OptionTexture1.getHeight()*scale3;
+                float optionWidth = OptionTexture1.getWidth()*scale3;
+                float optionHeight2 = OptionTexture2.getHeight()*scale3;
+                float optionWidth2 = OptionTexture2.getWidth()*scale3;
+                float optionHeight3 = OptionTexture3.getHeight()*scale3;
+                float optionWidth3 = OptionTexture3.getWidth()*scale3;
+                OptionSprite1= new Sprite(OptionTexture1);
+                OptionSprite1.setSize(optionWidth, optionHeight);
+                OptionSprite1.setOrigin(optionWidth / 2, optionHeight / 2);
+//            System.out.println("Origin X: " + OptionSprite1.getOriginX());
+//            System.out.println("Origin Y: " + OptionSprite1.getOriginY());
+//            System.out.println("Position X: " + OptionSprite1.getX());
+//            System.out.println("Position Y: " + OptionSprite1.getY());
+
+                OptionSprite2= new Sprite(OptionTexture2);
+                OptionSprite2.setSize(optionWidth2, optionHeight2);
+                OptionSprite2.setOrigin(optionWidth / 2, optionHeight / 2);
+
+                OptionSprite3= new Sprite(OptionTexture3);
+                OptionSprite3.setSize(optionWidth3, optionHeight3);
+                OptionSprite3.setOrigin(optionWidth / 2, optionHeight / 2);
+
+                Opt1Y =13.3f;
+                Opt1X =17.5f;
+                opt1XY = Opt1X;
+
+                Opt2X =17.499995f;
+                opt2XY = Opt2X;
+
+                Opt3X =17.500005f;
+                opt3XY = Opt3X;
+                scale3=0;
+//            System.out.println("sff");
+                flag=0;
+                 score =  score + 5;
+            }
         }
 
     private void draw() {
@@ -445,6 +517,7 @@ public class GameScreen implements Screen {
 //            }
 //            backgroundSprite.draw(batch);
         backgroundSprite2.draw(batch);
+
         float delta = Gdx.graphics.getDeltaTime();
         // Reset color to white for other drawing
         batch.setColor(1f, 1f, 1f, 1f);
@@ -473,6 +546,11 @@ public class GameScreen implements Screen {
         }
         if (Opt1Y +5<0){
             // Reset the tree's position to the top
+
+            eq=generator.generateProblem();
+//            System.out.println(eq);
+            sol=generator.Isol;
+
             float optionHeight = OptionTexture1.getHeight()*scale3;
             float optionWidth = OptionTexture1.getWidth()*scale3;
             float optionHeight2 = OptionTexture2.getHeight()*scale3;
@@ -505,9 +583,9 @@ public class GameScreen implements Screen {
             Opt3X =17.500005f;
             opt3XY = Opt3X;
             scale3=0;
-            System.out.println("sff");
+//            System.out.println("sff");
             flag=0;
-            System.out.println(Opt2X);
+//            System.out.println(Opt2X);
                 /*treePositions = new float[]{4f,8f,12f,14f};
                 treeIndex = MathUtils.random(0, treePositions.length - 1);
                 treeX = treePositions[treeIndex];
@@ -545,7 +623,7 @@ public class GameScreen implements Screen {
         Opt3Y -=treeSpeed* delta;
         float width = viewport.getWorldWidth()/2;
 
-        System.out.println(OptionTexture1.getWidth()*scale3);
+//        System.out.println(OptionTexture1.getWidth()*scale3);
         treeX = (float) (((treeY-((viewport.getWorldHeight()/2)+9))*-((width)-(treeXY))/((-0.000015)))+(width));
         Opt1X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*-((width)-(opt1XY))/((-0.000015)))+(width));
         Opt2X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*-((width)-(opt2XY))/((-0.000015)))+(width));
@@ -604,7 +682,9 @@ public class GameScreen implements Screen {
 
         // Draw the score at the top-left corner
         yourfont.setColor(Color.WHITE);
+        Score=""+score;
         yourfont.draw(batch, Score, 12, viewport.getWorldHeight() - 0.5f); // Adjusted position
+        font.draw(batch, eq, 14, 17);
 
         batch.end();
         stage.draw();
@@ -671,4 +751,5 @@ public class GameScreen implements Screen {
     }
 
     }
+
 

@@ -6,22 +6,25 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import static io.github.testcar.GameScreen.getHighScore;
+
 public class GameoverMenu implements Screen {
 
     private final SpriteBatch batch;
-    private Stage stage;
+    private final Stage stage;
     private final FitViewport viewport;
     private final Skin skin;
-    private final Sprite backgroundSprite; // Use Sprite for background
+    private final Sprite backgroundSprite;
     private Texture selectedCarTexture;
 
     public GameoverMenu(SpriteBatch batch) {
@@ -35,79 +38,76 @@ public class GameoverMenu implements Screen {
         // Load the background texture and set up the sprite
         Texture backgroundTexture = new Texture("Adish.png"); // Replace with your background image
         backgroundSprite = new Sprite(backgroundTexture);
-        backgroundSprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
 
         // Load the skin for UI elements
         skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
 
-        // Create buttons
+        // Create and arrange UI elements
         setupStage();
     }
 
     private void setupStage() {
-        stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
+        Table root = new Table();
+        root.setFillParent(true);
+        stage.addActor(root);
 
-        // Play button texture
+        // High score label
+        Label highScoreLabel = new Label("High Score: " + getHighScore(), skin);
+        highScoreLabel.setFontScale(2.0f); // Scale up for visibility
+        root.add(highScoreLabel).padBottom(20).row();
+
+        // Restart button
         Texture resumebuttonTexture = new Texture("Restartbutton.png");
-        TextureRegion buttonRegion = new TextureRegion(resumebuttonTexture);
-        TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
-        ImageButton button1 = new ImageButton(buttonDrawable);
-        button1.setPosition(12, 200);
-
+        ImageButton button1 = new ImageButton(new TextureRegionDrawable(resumebuttonTexture));
         button1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Restart Button Clicked!");
-                Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
-                game.setScreen(new GameScreen(batch, selectedCarTexture)); // Switch to GameScreen
+                Main game = (Main) Gdx.app.getApplicationListener();
+                game.setScreen(new GameScreen(batch, selectedCarTexture));
             }
         });
+        root.add(button1).padBottom(10).row();
 
-        Texture ExitbuttonTexture = new Texture("Exitbutton.png");
-        TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
-        TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
-        ImageButton button2 = new ImageButton(buttonDrawable2);
-        button2.setPosition(12, 12);
-
+        // Exit button
+        Texture exitButtonTexture = new Texture("Exitbutton.png");
+        ImageButton button2 = new ImageButton(new TextureRegionDrawable(exitButtonTexture));
         button2.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Button Clicked!");
-                dispose(); // Dispose of the PauseScreen instance
+                dispose();
                 Main game = (Main) Gdx.app.getApplicationListener();
-                game.setScreen(new GameMenu(batch, selectedCarTexture)); // Navigate to GameMenu
+                game.setScreen(new GameMenu(batch, selectedCarTexture));
             }
         });
-
-        stage.addActor(button1); // Add button to the stage
-        stage.addActor(button2); // Add button to the stage
+        root.add(button2).padBottom(10).row();
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1); // Clear the screen
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear the buffer
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        backgroundSprite.draw(batch); // Draw the sprite as background
+        backgroundSprite.draw(batch);
         batch.end();
 
         stage.act(delta);
-        stage.draw(); // Draw the stage UI elements
+        stage.draw();
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage); // Set the stage as input processor when the screen is shown
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        backgroundSprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Use screen dimensions
+        backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
     }
-
 
     @Override
     public void pause() {}
@@ -121,7 +121,7 @@ public class GameoverMenu implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        backgroundSprite.getTexture().dispose(); // Dispose the background texture
-        skin.dispose(); // Dispose the skin
+        backgroundSprite.getTexture().dispose();
+        skin.dispose();
     }
 }
