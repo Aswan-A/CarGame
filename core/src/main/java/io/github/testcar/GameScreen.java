@@ -357,6 +357,7 @@ public class GameScreen implements Screen {
     public static int getHighScore() {
         return highScore;
     }
+
     public void checkAndUpdateHighScore(int score) {
         if (score > highScore) {
             highScore = score; // Update high score
@@ -364,7 +365,6 @@ public class GameScreen implements Screen {
             preferences.flush(); // Write the changes to storage
         }
     }
-
     @Override
 
     public void resize(int width, int height) {
@@ -447,13 +447,16 @@ public class GameScreen implements Screen {
                 backgroundSprite2.setY(backgroundSprite.getY() + backgroundHeight);
             }
             if (PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) && sol!=1) {
+                checkAndUpdateHighScore(score);
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameoverMenu(new SpriteBatch()));
             }
             if (PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle()) && sol!=2) {
+                checkAndUpdateHighScore(score);
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameoverMenu(new SpriteBatch()));            }
             if (PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle()) && sol!=3) {
+                checkAndUpdateHighScore(score);
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameoverMenu(new SpriteBatch()));            }
             if(PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) || PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle())||PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle())){

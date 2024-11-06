@@ -36,7 +36,7 @@ public class GameoverMenu implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // Load the background texture and set up the sprite
-        Texture backgroundTexture = new Texture("Adish.png"); // Replace with your background image
+        Texture backgroundTexture = new Texture("GameoverScreenBackground.jpg"); // Replace with your background image
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
 
