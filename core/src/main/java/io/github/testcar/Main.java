@@ -13,7 +13,9 @@ public class Main extends Game {
     public void create() {
         batch = new SpriteBatch();
       setScreen(new SplashScreen(new SpriteBatch()));
-   //     setScreen(new GameoverMenu(new SpriteBatch()));
+//        setScreen(new GameScreen(new SpriteBatch(),selectedCarTexture));
+
+        //     setScreen(new GameoverMenu(new SpriteBatch()));
 //              setScreen(new asd(new SpriteBatch()));
 
     }

@@ -27,6 +27,7 @@ import com.badlogic.gdx.Preferences;
 
 
 import static io.github.testcar.GameMenu.isMusicOn;
+import static io.github.testcar.GameMenu.isSelected;
 import static io.github.testcar.asd.generator;
 
 public class GameScreen implements Screen {
@@ -50,6 +51,7 @@ public class GameScreen implements Screen {
     static Sprite OptionSprite3;
     int flag=1;
     Sprite backgroundSprite;
+    Sprite BlockSprite;
     Sprite backgroundSprite2;
     Sprite shadowSprite;
     Sprite shadowSprite2;
@@ -87,6 +89,7 @@ public class GameScreen implements Screen {
     private int treeIndex2;
     private Screen screen; // Change the type to Screen
     private Texture PausebuttonTexture;
+    private Texture BlockTexture;
     private ImageButton button1;
     private Stage stage;
     float delta = Gdx.graphics.getDeltaTime();
@@ -99,6 +102,12 @@ public class GameScreen implements Screen {
     private String eq="";
     private int sol;
     private Preferences preferences;
+    private Sprite BlockSprite2;
+    private int angle2;
+    private float velocityX2;
+    private float velocityY2;
+    private long spawnInterval2;
+    private long lastSpawnTime2;
 
 
     GameScreen(SpriteBatch batch, Texture selectedCarTexture) {
@@ -180,20 +189,27 @@ public class GameScreen implements Screen {
     float treeSpeed;
     float scale2;
     float scale3;
-
+    float angle;
     float Opt1Y;
     float Opt1X;
-
+    float speed;
     float Opt2Y;
     float Opt2X;
-
+    float velocityX;
+    float velocityY;
     float Opt3Y;
     float Opt3X;
+    float startTime;
+    Array<Sprite> blockSprites;
+    Array<Sprite> blockSprites2;
+    float spawnInterval;
+    long lastSpawnTime;
 
         public void create() {
             font = new BitmapFont(Gdx.files.internal("press.fnt"), Gdx.files.internal("press.png"), false);
             font.getData().setScale(1.5f);
-            backgroundTexture = new Texture("Adish.png");
+            backgroundTexture = new Texture("Adish.jpg");
+            BlockTexture = new Texture("Block2.png");
             if(selectedCarTexture!=null){
                 PlayerCarTexture =selectedCarTexture;
             }else{
@@ -216,6 +232,28 @@ public class GameScreen implements Screen {
         viewport = new FitViewport(35, 20);
         backgroundSprite=new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+        startTime=0;
+            angle = 70; // Adjust this to your desired angle
+            speed = 10; // Speed in pixels per second
+            angle2=73;
+            velocityX = speed * MathUtils.cosDeg(angle);
+            velocityY = speed * MathUtils.sinDeg(angle);
+            velocityX2 = speed * MathUtils.cosDeg(angle2);
+            velocityY2 = speed * MathUtils.sinDeg(angle2);
+            BlockSprite=new Sprite(BlockTexture);
+            BlockSprite.setSize(0.5f, 0.4f);
+            BlockSprite.setPosition(17.5f,13.31f);
+            BlockSprite2=new Sprite(BlockTexture);
+            BlockSprite2.setSize(0.5f, 0.4f);
+            BlockSprite2.setPosition(17.5f,13.31f);
+
+
+            blockSprites = new Array<>();
+            blockSprites2 = new Array<>();
+            spawnInterval = 0_700_000_000L; // 1 second in nanoseconds
+            lastSpawnTime = 0;
+            spawnInterval2 = 0_700_000_000L; // 1 second in nanoseconds
+            lastSpawnTime2 = 0;
 
             backgroundSprite2=new Sprite(backgroundTexture);
             backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
@@ -311,10 +349,10 @@ public class GameScreen implements Screen {
         treeSpeed = 1f;  // Adjust the speed as necessary
         scale2 = 1f;
         scale3=1f;
-            if (!isSelected){
-                HeadTiltDetector headTiltDetector = new HeadTiltDetector();
-                Thread headTiltThread = new Thread(headTiltDetector);
-                headTiltThread.start();}
+//            if (!isSelected){
+//                HeadTiltDetector headTiltDetector = new HeadTiltDetector();
+//                Thread headTiltThread = new Thread(headTiltDetector);
+//                headTiltThread.start();}
             preferences = Gdx.app.getPreferences("MyGamePreferences");
             highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
         }
@@ -329,6 +367,64 @@ public class GameScreen implements Screen {
     }
     public void playmusic(){
              music.play();
+    }
+
+    public void update(float deltaTime) {
+        // Spawn a new BlockSprite every second for blockSprites
+        if (TimeUtils.nanoTime() - lastSpawnTime > spawnInterval) {
+            Sprite newBlockSprite = new Sprite(new Texture("block.png")); // Replace with your texture
+            newBlockSprite.setPosition(17.5f, 12.7f); // Set initial spawn position
+            newBlockSprite.setSize(0.5f,0.5f); // Set initial spawn position
+
+            blockSprites.add(newBlockSprite);
+            lastSpawnTime = TimeUtils.nanoTime();
+        }
+
+        // Update and draw each BlockSprite in blockSprites
+        for (Sprite blockSprite : blockSprites) {
+            // Calculate movement based on angle
+            float velocityX = speed * MathUtils.cosDeg(angle);
+            float velocityY = speed * MathUtils.sinDeg(angle);
+
+            // Move the sprite
+            blockSprite.setPosition(
+                blockSprite.getX() + velocityX * deltaTime,
+                blockSprite.getY() - velocityY * deltaTime
+            );
+
+            // Draw the sprite
+            blockSprite.draw(batch);
+        }
+    }
+
+    // Update method for blockSprites2
+    public void update2(float deltaTime) {
+        // Spawn a new BlockSprite every second for blockSprites2
+        if (TimeUtils.nanoTime() - lastSpawnTime2 > spawnInterval2) {
+            Sprite newBlockSprite2 = new Sprite(new Texture("block.png")); // Replace with your texture
+            newBlockSprite2.setPosition(17.3f, 12.700000000f); // Set initial spawn position
+            newBlockSprite2.setSize(0.5f,0.5f); // Set initial spawn position
+
+
+            blockSprites2.add(newBlockSprite2);
+            lastSpawnTime2 = TimeUtils.nanoTime();
+        }
+
+        // Update and draw each BlockSprite in blockSprites2
+        for (Sprite blockSprite2 : blockSprites2) {
+            // Calculate movement based on angle
+            float velocityX2 = speed * MathUtils.cosDeg(angle2);
+            float velocityY2 = speed * MathUtils.sinDeg(angle2);
+
+            // Move the sprite
+            blockSprite2.setPosition(
+                blockSprite2.getX() - velocityX2 * deltaTime,
+                blockSprite2.getY() - velocityY2 * deltaTime
+            );
+
+            // Draw the sprite
+            blockSprite2.draw(batch);
+        }
     }
     public void pauseGame() {
         isPaused = true; // Set the pause flag to true
@@ -345,6 +441,7 @@ public class GameScreen implements Screen {
 
 //          System.out.println("56");
             checkForPauseInput();
+//            moveBlockSprite(delta);
             switch (gameState) {
                 case RUNNING:
                     input();  // Handle player input
@@ -501,7 +598,17 @@ public class GameScreen implements Screen {
                  score =  score + 5;
             }
         }
-
+    public void moveBlockSprite(float deltaTime) {
+        // Update BlockSprite position
+        BlockSprite.setPosition(
+            BlockSprite.getX() + velocityX * deltaTime,
+            BlockSprite.getY() - velocityY * deltaTime
+        );
+        BlockSprite2.setPosition(
+            BlockSprite2.getX() - velocityX2 * deltaTime,
+            BlockSprite2.getY() - velocityY2 * deltaTime
+        );
+        }
     private void draw() {
         ScreenUtils.clear(Color.BLACK);
 //        System.out.println(OptionSprite1.getHeight());
@@ -521,7 +628,14 @@ public class GameScreen implements Screen {
 //            }
 //            backgroundSprite.draw(batch);
         backgroundSprite2.draw(batch);
+        update(delta);
+       update2(delta);
 
+//        BlockSprite.draw(batch);
+//        BlockSprite2.draw(batch);
+//        if (TimeUtils.nanoTime() - startTime > 1_000_000_000L) {
+//
+//        }
         float delta = Gdx.graphics.getDeltaTime();
         // Reset color to white for other drawing
         batch.setColor(1f, 1f, 1f, 1f);
