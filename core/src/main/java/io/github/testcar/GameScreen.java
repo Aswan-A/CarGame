@@ -624,14 +624,14 @@ public class GameScreen implements Screen {
         float width = viewport.getWorldWidth()/2;
 
 //        System.out.println(OptionTexture1.getWidth()*scale3);
-        treeX = (float) (((treeY-((viewport.getWorldHeight()/2)+9))*-((width)-(treeXY))/((-0.000015)))+(width));
+        treeX =(((treeY-((viewport.getWorldHeight()/2)+9))*-((width)-(treeXY))/((-5)))+(width));
         Opt1X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*-((width)-(opt1XY))/((-0.000015)))+(width));
         Opt2X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*-((width)-(opt2XY))/((-0.000015)))+(width));
 
 //            System.out.println(viewport.getWorldWidth()/4);
         //   System.out.println(treeX2);
 
-        treeX2 = (float) (((treeY-((viewport.getWorldHeight()/2)+9))*((treeX2Y)-(width))/((-0.000015)))+(width));
+        treeX2 =((treeY-((viewport.getWorldHeight()/2)+9))*((treeX2Y)-(width))/((-5)))+(width);
         Opt3X= (float) (((Opt1Y-((viewport.getWorldHeight()/2)+9))*((opt3XY)-(width))/((-0.000015)))+(width));
 
 
