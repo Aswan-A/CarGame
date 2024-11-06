@@ -41,7 +41,7 @@ public class GameMenu implements Screen {
     private Texture normalTexture;
     private Texture selectedTexture;
 
-    private boolean isSelected;
+    public static boolean isSelected=false;
     public static boolean isMusicOn = true;
 
     float screenHeight;
@@ -111,6 +111,7 @@ public class GameMenu implements Screen {
         height2 = ExitbuttonTexture.getHeight();
 
         TextureRegionDrawable exitButtonDrawable = new TextureRegionDrawable(new TextureRegion(ExitbuttonTexture));
+
         button2 = new ImageButton(exitButtonDrawable);
         button2.setPosition((screenWidth / 2) - (width2 / 2f), (screenHeight / 4) - (height2 / 2f));
 
@@ -171,7 +172,9 @@ public class GameMenu implements Screen {
         selectedStyle.imageUp = new TextureRegionDrawable(new TextureRegion(selectedTexture));
 
 // Initialize button with normal style
-        button5 = new ImageButton(normalStyle);
+        if (isSelected){button5 = new ImageButton(selectedStyle);}
+        else{
+            button5 = new ImageButton(normalStyle);}
         button5.setPosition(screenWidth - normalTexture.getWidth(), screenHeight - (4 * normalTexture.getHeight()));
         button5.addListener(new ClickListener() {
             @Override
@@ -186,6 +189,7 @@ public class GameMenu implements Screen {
 
                 // Switch to StoreScreen only if selected
                 if (isSelected) {
+
                 }
             }
         });

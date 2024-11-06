@@ -311,9 +311,10 @@ public class GameScreen implements Screen {
         treeSpeed = 1f;  // Adjust the speed as necessary
         scale2 = 1f;
         scale3=1f;
-//            HeadTiltDetector headTiltDetector = new HeadTiltDetector();
-//            Thread headTiltThread = new Thread(headTiltDetector);
-//            headTiltThread.start();
+            if (!isSelected){
+                HeadTiltDetector headTiltDetector = new HeadTiltDetector();
+                Thread headTiltThread = new Thread(headTiltDetector);
+                headTiltThread.start();}
             preferences = Gdx.app.getPreferences("MyGamePreferences");
             highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
         }
@@ -397,7 +398,7 @@ public class GameScreen implements Screen {
             float speed = 12f;
             float delta = Gdx.graphics.getDeltaTime();
 
-//            int steer =HeadTiltDetector.getSteeringDirection();
+            //int steer =HeadTiltDetector.getSteeringDirection();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             PlayerCarSprite.translateX(speed * delta);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
