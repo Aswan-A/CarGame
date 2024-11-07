@@ -35,10 +35,8 @@ public class GameScreen implements Screen {
     private  BitmapFont font;
     Texture backgroundTexture;
     Texture PlayerCarTexture;
-    Texture dropTexture;
     Texture GameoverTexture;
-    Texture shadowTexture;
-    Texture shadowTexture2;
+
     Sound dropSound;
     Music music;
     SpriteBatch batch;
@@ -54,8 +52,7 @@ public class GameScreen implements Screen {
     Sprite backgroundSprite;
     Sprite BlockSprite;
     Sprite backgroundSprite2;
-    Sprite shadowSprite;
-    Sprite shadowSprite2;
+
     Vector2 touchPos;
     static Array<Sprite> dropSprites;
     float dropTimer;
@@ -66,9 +63,7 @@ public class GameScreen implements Screen {
     BitmapFont yourfont;
     static boolean[] gameOver = {false};
     private int fl=1;
-    float shadowY;
-    float shadowY2;
-    float shadowSpeed;
+
     int u;
     Texture buildingTexture;
     Texture TreeTexture;
@@ -225,7 +220,6 @@ public class GameScreen implements Screen {
         }else{
             PlayerCarTexture=new Texture ("pop.png");
         }
-        buildingTexture=new Texture ("Building.png");
         BuildTexture=new Texture("Build3.png");
         TreeTexture=new Texture("Tree.png");
         CloudTexture=new Texture ("Cloud.png");
@@ -235,11 +229,8 @@ public class GameScreen implements Screen {
         OptionTexture3 =new Texture("opt3.png");
 
         TreeTexture2=new Texture("Tree.png");
-        dropTexture = new Texture("drop.png");
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
-        shadowTexture=new Texture("resized_black_white_alternate_lines_shadow.png");
-        shadowTexture2=new Texture("resized_black_white_alternate_lines_shadow.png");
         viewport = new FitViewport(35, 20);
         backgroundSprite=new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
@@ -269,12 +260,7 @@ public class GameScreen implements Screen {
         backgroundSprite2=new Sprite(backgroundTexture);
         backgroundSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         backgroundSprite2.setY(0);
-        shadowSprite=new Sprite(shadowTexture);
-        shadowSprite.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
-        shadowSprite.setY(0);
-        shadowSprite2=new Sprite(backgroundTexture);
-        shadowSprite2.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()/2);
-        shadowSprite2.setY(0);
+
         PlayerCarSprite = new Sprite(PlayerCarTexture);
         PlayerCarSprite.setSize(5, 5);
         BuildSprite=new Sprite(BuildTexture);
@@ -315,13 +301,8 @@ public class GameScreen implements Screen {
         yourfont.getData().setScale(0.1f, 0.1f);
         preferences = Gdx.app.getPreferences("MyGamePreferences");
         highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
-        shadowSprite.setPosition(0, 0);
-        shadowSprite2.setPosition(25, 25); // Ensure both shadows start in view
-        shadowY = 0;   // Initial Y position
-        shadowY2=0;
-        shadowSpeed = 4f;  // Speed of the shadow movement (in pixels per second)
+
         u=1;
-        buildingSprite = new Sprite(buildingTexture);
         treeY = 13.31f;
         Opt1Y =13.31f;
         Opt2Y=13.31f;
@@ -341,13 +322,8 @@ public class GameScreen implements Screen {
         yourfont.getData().setScale(0.1f, 0.1f);
         preferences = Gdx.app.getPreferences("MyGamePreferences");
         highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
-        shadowSprite.setPosition(0, 0);
-        shadowSprite2.setPosition(25, 25); // Ensure both shadows start in view
-        shadowY = 0;   // Initial Y position
-        shadowY2=0;
-        shadowSpeed = 4f;  // Speed of the shadow movement (in pixels per second)
+
         u=1;
-        buildingSprite = new Sprite(buildingTexture);
         treeY = 13.31f;
 //                    System.out.println(viewport.getWorldWidth());
         treePositions = new float[]{4f,8f,12f,14.5f};
@@ -547,21 +523,6 @@ if(!isSelected){
 //                viewport.unproject(touchPos);
 //                PlayerCarSprite.setCenterX(touchPos.x);
 //            }
-    }
-    private void createonetree(){
-        treeSprite = createtree();  // Create a new sprite when the tree goes off screen
-        treeSprite2 = createtree();  // Create a new sprite when the tree goes off screen
-        treeY =13.3f;
-        treePositions = new float[]{4f,8f,12f,14f};
-        treeIndex = MathUtils.random(0, treePositions.length - 1);
-        treeX = treePositions[treeIndex];
-        treeXY=treeX;
-        treePositions2 = new float[]{21f,24f,28f,32.5f};
-        treeIndex2 = MathUtils.random(0, treePositions2.length - 1);
-        treeX2= treePositions2[treeIndex2];
-        treeX2Y=treeX2;
-        treeX3= viewport.getWorldWidth()/5;
-        scale2=0;
     }
     private void logic() {
         if (gameOver[0]) return;
@@ -842,15 +803,11 @@ if(!isSelected){
         // Draw player car
 
         PlayerCarSprite.draw(batch);
-        float buildingWidth = viewport.getWorldWidth();  // Fit to the full width of the viewport
-        float buildingHeight = buildingWidth * ((float) buildingTexture.getHeight() / buildingTexture.getWidth()); // Maintain aspect ratio
-        // Draw Game Over texture if the game is over
+       // Draw Game Over texture if the game is over
         if (gameOver[0]) {
             batch.draw(GameoverTexture, viewport.getWorldWidth() / 2 - (float) GameoverTexture.getWidth() / 2,
                 viewport.getWorldHeight() / 2 - (float) GameoverTexture.getHeight() / 2);
         }
-        float xPosition = 0;  // Starting from the left edge
-        float yPosition = viewport.getWorldHeight() - buildingHeight;  // Position it at the top
 
         // Draw the score at the top-left corner
         yourfont.setColor(Color.WHITE);
@@ -904,16 +861,13 @@ if(!isSelected){
     public void dispose() {
         backgroundTexture.dispose();
         PlayerCarTexture.dispose();
-        dropTexture.dispose();
         if (GameoverTexture != null) {
             GameoverTexture.dispose();
         }
-        shadowTexture.dispose();
-        shadowTexture2.dispose();
+
         dropSound.dispose();
         music.dispose();
         batch.dispose();
-        buildingTexture.dispose();
         TreeTexture.dispose();
         TreeTexture2.dispose();
         BuildTexture.dispose();
