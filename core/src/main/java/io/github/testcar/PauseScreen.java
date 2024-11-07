@@ -21,7 +21,7 @@ import static io.github.testcar.GameMenu.isMusicOn;
 
 
 public class PauseScreen implements Screen {
-
+    public static int restarted=0;
     private final SpriteBatch batch;
     private final GameScreen gameScreen;
     private FitViewport viewport;
@@ -51,7 +51,7 @@ public class PauseScreen implements Screen {
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(viewport.getWorldWidth()/2, 3*viewport.getWorldHeight()/4);
         backgroundSprite.setX(viewport.getWorldWidth()/4);
-        backgroundSprite.setY(viewport.getWorldHeight()/8);
+        backgroundSprite.setY(3*viewport.getWorldHeight()/16);
         blurShader = new ShaderProgram(Gdx.files.internal("blur_vertex.glsl"), Gdx.files.internal("blur_fragment.glsl"));
 
     }
@@ -66,7 +66,7 @@ public class PauseScreen implements Screen {
         TextureRegionDrawable buttonDrawable = new TextureRegionDrawable(buttonRegion);
         ImageButton button1 = new ImageButton(buttonDrawable);
         button1.setSize(10, 7);
-        button1.setPosition(12, 9);
+        button1.setPosition(12, 11);
 
         button1.addListener(new ClickListener() {
             @Override
@@ -87,14 +87,16 @@ public class PauseScreen implements Screen {
         TextureRegion buttonRegion2 = new TextureRegion(ExitbuttonTexture);
         TextureRegionDrawable buttonDrawable2 = new TextureRegionDrawable(buttonRegion2);
         ImageButton button2 = new ImageButton(buttonDrawable2);
-        button2.setSize(10, 2);
-        button2.setPosition(12, 5);
+        button2.setSize(10, 7);
+        button2.setPosition(12, 3);
 
         // Inside a method, likely setupStage()
         button2.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Button Clicked!");
+                HeadTiltDetector.stop();
+                music.stop();
                 dispose(); // Dispose of the PauseScreen instance
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameMenu(batch, selectedCarTexture)); // Navigate to GameMenu
@@ -107,12 +109,14 @@ public class PauseScreen implements Screen {
         TextureRegionDrawable buttonDrawable3 = new TextureRegionDrawable(buttonRegion3);
         ImageButton button3 = new ImageButton(buttonDrawable3);
         button3.setPosition(12, 6);
-        button3.setSize(10, 7); // Set size for button3
+        button3.setSize(10, 9); // Set size for button3
 
         button3.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Restart Button Clicked!");
+                restarted =1;
+                music.stop();
                 Main game = (Main) Gdx.app.getApplicationListener(); // Ensure this class manages screens
                 game.setScreen(new GameScreen(batch, selectedCarTexture)); // Switch to GameScreen
             }

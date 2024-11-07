@@ -78,6 +78,7 @@ public class GameoverMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Button Clicked!");
                 dispose();
+
                 Main game = (Main) Gdx.app.getApplicationListener();
                 game.setScreen(new GameMenu(batch, selectedCarTexture));
             }

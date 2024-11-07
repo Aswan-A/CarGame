@@ -28,7 +28,8 @@ import com.badlogic.gdx.Preferences;
 
 import static io.github.testcar.GameMenu.isMusicOn;
 import static io.github.testcar.GameMenu.isSelected;
-import static io.github.testcar.asd.generator;
+import static io.github.testcar.PauseScreen.restarted;
+
 
 public class GameScreen implements Screen {
     private  BitmapFont font;
@@ -374,7 +375,7 @@ public class GameScreen implements Screen {
         treeSpeed = 1f;  // Adjust the speed as necessary
         scale2 = 1f;
         scale3=1f;
-            if (!isSelected){
+            if (!isSelected&&restarted!=1){
                 HeadTiltDetector headTiltDetector = new HeadTiltDetector();
                 Thread headTiltThread = new Thread(headTiltDetector);
                 headTiltThread.start();}
@@ -535,10 +536,12 @@ if(!isSelected){
         steer =HeadTiltDetector.getSteeringDirection();}
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)||steer==1) {
             PlayerCarSprite.translateX(speed * delta);
+            PlayerCarSprite.setRotation(200);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)||steer==-1) {
             PlayerCarSprite.translateX(-speed * delta);
+            PlayerCarSprite.setRotation(-20);
         }
-
+        PlayerCarSprite.setRotation(0);
 //            if (Gdx.input.isTouched()) {
 //                touchPos.set(Gdx.input.getX(), Gdx.input.getY());
 //                viewport.unproject(touchPos);
@@ -566,7 +569,7 @@ if(!isSelected){
         float PlayerCarWidth = PlayerCarSprite.getWidth();
         float PlayerCarHeight = PlayerCarSprite.getHeight();
 
-        PlayerCarSprite.setX(MathUtils.clamp(PlayerCarSprite.getX(), 1.8f, worldWidth - PlayerCarWidth-1.8f));
+        PlayerCarSprite.setX(MathUtils.clamp(PlayerCarSprite.getX(), 7f, worldWidth - PlayerCarWidth-7f));
 
         float delta = Gdx.graphics.getDeltaTime();
         PlayerCarRectangle.set(PlayerCarSprite.getX(), PlayerCarSprite.getY(), PlayerCarWidth, PlayerCarHeight);
@@ -584,14 +587,17 @@ if(!isSelected){
         if (PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) && sol!=1) {
             checkAndUpdateHighScore(score);
             Main game = (Main) Gdx.app.getApplicationListener();
+            music.stop();
             game.setScreen(new GameoverMenu(new SpriteBatch()));
         }
         if (PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle()) && sol!=2) {
             checkAndUpdateHighScore(score);
+            music.stop();
             Main game = (Main) Gdx.app.getApplicationListener();
             game.setScreen(new GameoverMenu(new SpriteBatch()));            }
         if (PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle()) && sol!=3) {
             checkAndUpdateHighScore(score);
+            music.stop();
             Main game = (Main) Gdx.app.getApplicationListener();
             game.setScreen(new GameoverMenu(new SpriteBatch()));            }
         if(PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) || PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle())||PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle())){
@@ -707,7 +713,6 @@ if(!isSelected){
             treeX2Y=treeX2;
             treeX3= viewport.getWorldWidth()/5;
             scale2=0;
-            
 //            System.out.println(treeX);
 
         }

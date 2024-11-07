@@ -114,7 +114,7 @@ public class RandomMathProblemGenerator {
         	else
         		generateProblem();
         }
-        return	(int)operand1 + " " + operation1 + " " + (int)operand2;
+        return	(int)operand1 + " " + operation1 +  " "+ (int)operand2;
     }
 
     private int getRandomOperand() {
