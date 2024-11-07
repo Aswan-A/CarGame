@@ -357,7 +357,7 @@ public class GameScreen implements Screen {
         Opt2X=17.499995f;
         Opt3X=17.500005f;
 
-        Cloudsprite.setPosition(10, 15);
+        Cloudsprite.setPosition(15, 15);
         Cloudsprite.setSize(3, 3);
         Cloudsprite2.setPosition(5, 14);
         Cloudsprite2.setSize(5, 5);

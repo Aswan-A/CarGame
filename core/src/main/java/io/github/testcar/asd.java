@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
         SpriteBatch batch;
         BitmapFont font;
-        static RandomMathProblemGenerator generator = new RandomMathProblemGenerator(1, 3);
+
 
         public asd(SpriteBatch batch) {
             // Initialize the SpriteBatch and load the custom BitmapFont
@@ -30,7 +30,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
             font.setColor(1, 1, 1, 1); // White color
 
             // Draw text
-
+            RandomMathProblemGenerator generator = new RandomMathProblemGenerator(1,3);
             font.draw(batch, generator.generateProblem(), 800, 1000);
 
 

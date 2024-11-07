@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class RandomMathProblemGenerator {
     private Random random;
-    private int min;
-    private int max;
+    int min;
+    int max;
     float csol;
     public int Isol;
     int number;
@@ -32,7 +32,7 @@ public class RandomMathProblemGenerator {
     	generateOperands();
         operation1 = getRandomOperation();
         operation2 = getRandomOperation();
-        number = random.nextInt(2,4);
+        number = random.nextInt(2)+2;
         	switch(operation1){
         		case("+"):
         			csol=operand1 + operand2;
