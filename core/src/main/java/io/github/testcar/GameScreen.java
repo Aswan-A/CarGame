@@ -707,6 +707,7 @@ if(!isSelected){
             treeX2Y=treeX2;
             treeX3= viewport.getWorldWidth()/5;
             scale2=0;
+            
 //            System.out.println(treeX);
 
         }
