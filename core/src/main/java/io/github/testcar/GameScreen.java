@@ -108,7 +108,11 @@ public class GameScreen implements Screen {
     private float velocityY2;
     private long spawnInterval2;
     private long lastSpawnTime2;
-
+    int steer=0;
+    private Texture CloudTexture;
+    private Sprite Cloudsprite;
+    private Sprite Cloudsprite2;
+    private Sprite Cloudsprite3;
 
     GameScreen(SpriteBatch batch, Texture selectedCarTexture) {
         this.batch = batch;
@@ -204,6 +208,11 @@ public class GameScreen implements Screen {
     Array<Sprite> blockSprites2;
     float spawnInterval;
     long lastSpawnTime;
+    private float speed2;
+    private float leftLimit;
+    private float rightLimit;
+    private int direction; // 1 means right, -1 means left
+    RandomMathProblemGenerator generator = new RandomMathProblemGenerator(1, 3);
 
     public void create() {
         font = new BitmapFont(Gdx.files.internal("press.fnt"), Gdx.files.internal("press.png"), false);
@@ -218,6 +227,7 @@ public class GameScreen implements Screen {
         buildingTexture=new Texture ("Building.png");
         BuildTexture=new Texture("Build3.png");
         TreeTexture=new Texture("Tree.png");
+        CloudTexture=new Texture ("Cloud.png");
 
         OptionTexture1 =new Texture("opt1.png");
         OptionTexture2 =new Texture("opt2.png");
@@ -268,6 +278,10 @@ public class GameScreen implements Screen {
         PlayerCarSprite.setSize(5, 5);
         BuildSprite=new Sprite(BuildTexture);
         treeSprite = new Sprite(TreeTexture);
+        Cloudsprite=new Sprite(CloudTexture);
+        Cloudsprite2=new Sprite(CloudTexture);
+        Cloudsprite3=new Sprite(CloudTexture);
+
         treeSprite.setOrigin(treeSprite.getWidth()/2,0);
         treeSprite2 = new Sprite(TreeTexture);
         treeSprite2.setOrigin(treeSprite    .getWidth()/2,0);
@@ -282,7 +296,11 @@ public class GameScreen implements Screen {
         OptionSprite2.setPosition(2,5);
 
         OptionSprite3.setPosition(2,5);
+        speed2 = 0.01f;
 
+        leftLimit = 5f;
+        rightLimit = 25f;
+        direction = 1; // 1 means right, -1 means left
         touchPos = new Vector2();
         dropSprites = new Array<>();
         PlayerCarRectangle = new Rectangle();
@@ -338,6 +356,13 @@ public class GameScreen implements Screen {
         Opt1X =17.5f;
         Opt2X=17.499995f;
         Opt3X=17.500005f;
+
+        Cloudsprite.setPosition(10, 15);
+        Cloudsprite.setSize(3, 3);
+        Cloudsprite2.setPosition(5, 14);
+        Cloudsprite2.setSize(5, 5);
+        Cloudsprite3.setPosition(32, 16);
+        Cloudsprite3.setSize(4, 3);
 
 
         treeXY=treeX;
@@ -439,6 +464,18 @@ public class GameScreen implements Screen {
             treeSprite2.setOrigin(treeSprite2.getWidth()/2,0);
             treeSprite.setOrigin(treeSprite.getWidth()/2,0);
 
+            float newPosition = Cloudsprite.getX() + speed2 * direction;
+
+            // Check if we've reached the movement boundaries
+            if (newPosition <= leftLimit || newPosition >= rightLimit) {
+                direction *= -1; // Reverse direction
+            }
+
+            // Apply new positions to each cloud sprite
+            Cloudsprite.setPosition(newPosition, Cloudsprite.getY());
+            Cloudsprite2.setPosition(newPosition - 5, Cloudsprite2.getY()); // Offset for each sprite
+            Cloudsprite3.setPosition(newPosition + 5, Cloudsprite3.getY());
+
 //          System.out.println("56");
             checkForPauseInput();
 //            moveBlockSprite(delta);
@@ -494,8 +531,8 @@ public class GameScreen implements Screen {
         if (gameOver[0]) return;
         float speed = 12f;
         float delta = Gdx.graphics.getDeltaTime();
-
-        int steer =HeadTiltDetector.getSteeringDirection();
+if(!isSelected){
+        steer =HeadTiltDetector.getSteeringDirection();}
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)||steer==1) {
             PlayerCarSprite.translateX(speed * delta);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)||steer==-1) {
@@ -546,21 +583,15 @@ public class GameScreen implements Screen {
         }
         if (PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) && sol!=1) {
             checkAndUpdateHighScore(score);
-            HeadTiltDetector.stop();
-            music.stop();
             Main game = (Main) Gdx.app.getApplicationListener();
             game.setScreen(new GameoverMenu(new SpriteBatch()));
         }
         if (PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle()) && sol!=2) {
             checkAndUpdateHighScore(score);
-            HeadTiltDetector.stop();
-            music.stop();
             Main game = (Main) Gdx.app.getApplicationListener();
             game.setScreen(new GameoverMenu(new SpriteBatch()));            }
         if (PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle()) && sol!=3) {
             checkAndUpdateHighScore(score);
-            music.stop();
-            HeadTiltDetector.stop();
             Main game = (Main) Gdx.app.getApplicationListener();
             game.setScreen(new GameoverMenu(new SpriteBatch()));            }
         if(PlayerCarRectangle.overlaps(OptionSprite1.getBoundingRectangle()) || PlayerCarRectangle.overlaps(OptionSprite2.getBoundingRectangle())||PlayerCarRectangle.overlaps(OptionSprite3.getBoundingRectangle())){
@@ -636,7 +667,18 @@ public class GameScreen implements Screen {
         backgroundSprite2.draw(batch);
         update(delta);
         update2(delta);
-
+        Cloudsprite.draw(batch);
+        Cloudsprite2.draw(batch);
+        Cloudsprite3.draw(batch);
+//        Cloudsprite.setPosition(15, 15);
+//        Cloudsprite.setSize(5, 5);
+//        Cloudsprite.draw(batch);
+//        Cloudsprite2.setPosition(10, 15);
+//        Cloudsprite2.setSize(5, 5);
+//        Cloudsprite2.draw(batch);
+//        Cloudsprite3.setPosition(20, 15);
+//        Cloudsprite3.setSize(5, 5);
+//        Cloudsprite3.draw(batch);
 //        BlockSprite.draw(batch);
 //        BlockSprite2.draw(batch);
 //        if (TimeUtils.nanoTime() - startTime > 1_000_000_000L) {
